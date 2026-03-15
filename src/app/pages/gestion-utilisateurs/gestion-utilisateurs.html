@@ -1,0 +1,141 @@
+<div class="dashboard">
+
+ 
+  <!-- Sidebar -->
+  <aside class="sidebar" [class.collapsed]="isCollapsed">
+
+    <div class="sidebar-top">
+      <div class="logo">MediaSoft</div>
+
+      <!-- bouton réduire -->
+      <div class="toggle-btn" (click)="toggleSidebar()">
+        ☰
+      </div>
+    </div>
+
+    <ul class="nav-links">
+
+      <li>
+        <a routerLink="/dashboard-admin" routerLinkActive="active">
+          <span class="icon">📊</span>
+          <span class="text">Dashboard</span>
+        </a>
+      </li>
+
+      <li>
+        <a routerLink="/import-factures">
+          <span class="icon">📤</span>
+          <span class="text">Import facture</span>
+        </a>
+      </li>
+
+      <li>
+        <a routerLink="/liste-factures">
+          <span class="icon">📄</span>
+          <span class="text">Liste des factures</span>
+        </a>
+      </li>
+
+      <li>
+        <a routerLink="/validation">
+          <span class="icon">✔️</span>
+          <span class="text">Validation</span>
+        </a>
+      </li>
+
+      <li>
+        <a routerLink="/synchronisation">
+          <span class="icon">🔄</span>
+          <span class="text">Synchronisation</span>
+        </a>
+      </li>
+
+      <li>
+        <a routerLink="/reporting">
+          <span class="icon">📈</span>
+          <span class="text">Reporting</span>
+        </a>
+      </li>
+
+      <li>
+        <a routerLink="/gestion-utilisateurs">
+          <span class="icon">👥</span>
+          <span class="text">Utilisateurs</span>
+        </a>
+      </li>
+
+    </ul>
+
+    <div class="user-menu">
+      <div class="user-email">admin@mediasoft.fr</div>
+      <button class="logout" (click)="logout()">Déconnexion</button>
+    </div>
+
+  </aside>
+  <!-- Contenu principal -->
+  <main class="content">
+    <h2>Gestion des utilisateurs</h2>
+    <p>Gérez les utilisateurs et leurs droits d'accès</p>
+
+    <!-- Cartes statistiques -->
+    <div class="stats-cards">
+      <div class="card">Total utilisateurs: {{users.length}}</div>
+      <div class="card">Administrateurs: {{users.filter(u => u.role==='Administrateur').length}}</div>
+      <div class="card">Utilisateurs actifs: {{users.filter(u => u.status==='Actif').length}}</div>
+    </div>
+
+    <!-- Actions utilisateur -->
+    <div class="user-actions">
+      <input type="text" placeholder="Rechercher un utilisateur..." [(ngModel)]="searchText">
+      <button (click)="openAddModal()">Ajouter un utilisateur</button>
+    </div>
+
+    <!-- Tableau utilisateurs -->
+    <table>
+      <thead>
+        <tr>
+          <th>Nom</th>
+          <th>Email</th>
+          <th>Rôle</th>
+          <th>Date création</th>
+          <th>Statut</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let u of users.filter(u => u.name.toLowerCase().includes(searchText().toLowerCase()))">
+          <td>{{u.name}}</td>
+          <td>{{u.email}}</td>
+          <td>{{u.role}}</td>
+          <td>{{u.createdAt}}</td>
+          <td>{{u.status}}</td>
+          <td>
+            <button (click)="openEditModal(u)">Modifier</button>
+            <button (click)="deleteUser(u)">Supprimer</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Modal Ajouter/Modifier -->
+    <div class="modal" *ngIf="showModal()">
+      <div class="modal-content">
+        <h3>{{modalTitle()}}</h3>
+        <input type="text" placeholder="Nom" [(ngModel)]="formUser.name">
+        <input type="email" placeholder="Email" [(ngModel)]="formUser.email">
+        <select [(ngModel)]="formUser.role">
+          <option value="Utilisateur">Utilisateur</option>
+          <option value="Administrateur">Administrateur</option>
+        </select>
+        <select [(ngModel)]="formUser.status">
+          <option value="Actif">Actif</option>
+          <option value="Inactif">Inactif</option>
+        </select>
+        <div class="modal-buttons">
+          <button class="confirm" (click)="saveUser()">Créer</button>
+          <button class="cancel" (click)="closeModal()">Annuler</button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

@@ -1,0 +1,136 @@
+<div class="dashboard">
+
+ 
+  <!-- Sidebar -->
+  <aside class="sidebar" [class.collapsed]="isCollapsed">
+
+    <div class="sidebar-top">
+      <div class="logo">MediaSoft</div>
+
+      <!-- bouton réduire -->
+      <div class="toggle-btn" (click)="toggleSidebar()">
+        ☰
+      </div>
+    </div>
+
+    <ul class="nav-links">
+
+      <li>
+        <a routerLink="/dashboard-admin" routerLinkActive="active">
+          <span class="icon">📊</span>
+          <span class="text">Dashboard</span>
+        </a>
+      </li>
+
+      <li>
+        <a routerLink="/import-factures">
+          <span class="icon">📤</span>
+          <span class="text">Import facture</span>
+        </a>
+      </li>
+
+      <li>
+        <a routerLink="/liste-factures">
+          <span class="icon">📄</span>
+          <span class="text">Liste des factures</span>
+        </a>
+      </li>
+
+      <li>
+        <a routerLink="/validation">
+          <span class="icon">✔️</span>
+          <span class="text">Validation</span>
+        </a>
+      </li>
+
+      <li>
+        <a routerLink="/sync-divalto">
+          <span class="icon">🔄</span>
+          <span class="text">Synchronisation</span>
+        </a>
+      </li>
+
+      <li>
+        <a routerLink="/reporting">
+          <span class="icon">📈</span>
+          <span class="text">Reporting</span>
+        </a>
+      </li>
+
+      <li>
+        <a routerLink="/gestion-utilisateurs">
+          <span class="icon">👥</span>
+          <span class="text">Utilisateurs</span>
+        </a>
+      </li>
+
+    </ul>
+
+    <div class="user-menu">
+      <div class="user-email">admin@mediasoft.fr</div>
+      <button class="logout" (click)="logout()">Déconnexion</button>
+    </div>
+
+  </aside>
+
+  <!-- Main content -->
+  <main class="content">
+    <div class="header">
+      <h1>Liste des factures</h1>
+      <p>Gérez toutes vos factures en un seul endroit</p>
+    </div>
+
+ 
+
+  
+
+    <div class="filters">
+      <input type="text" placeholder="Rechercher par n° ou fournisseur..." [(ngModel)]="search" (input)="applyFilters()" />
+      <select [(ngModel)]="statusFilter" (change)="applyFilters()">
+        <option value="">Tous les statuts</option>
+        <option value="Validée">Validée</option>
+        <option value="En attente">En attente</option>
+        <option value="Rejetée">Rejetée</option>
+        <option value="Synchronisée">Synchronisée</option>
+      </select>
+      <select [(ngModel)]="importFilter" (change)="applyFilters()">
+        <option value="">Toutes les méthodes</option>
+        <option value="upload">Upload</option>
+        <option value="email">Email</option>
+        <option value="api">API</option>
+      </select>
+    </div>
+
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>N° Facture</th>
+            <th>Fournisseur</th>
+            <th>Date</th>
+            <th>Échéance</th>
+            <th>Montant</th>
+            <th>Statut</th>
+            <th>Import</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let inv of filteredInvoices">
+            <td>{{ inv.number }}</td>
+            <td>{{ inv.supplier }}</td>
+            <td>{{ inv.date }}</td>
+            <td>{{ inv.dueDate }}</td>
+            <td>{{ inv.total | currency:'EUR' }}</td>
+            <td>
+              <span class="status" [ngClass]="inv.status.toLowerCase().replace(' ','-')">{{ inv.status }}</span>
+            </td>
+            <td>{{ inv.importMethod }}</td>
+            <td>
+              <a [routerLink]="['/facture-details', inv.number]">Détails</a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>

@@ -1,0 +1,150 @@
+<div class="dashboard">
+
+  <!-- Sidebar -->
+  <!-- Sidebar -->
+<aside class="sidebar" [class.collapsed]="isCollapsed">
+
+    <div class="sidebar-top">
+      <div class="logo">MediaSoft</div>
+
+      <!-- bouton réduire -->
+      <div class="toggle-btn" (click)="toggleSidebar()">
+        ☰
+      </div>
+    </div>
+
+    <ul class="nav-links">
+
+      <li>
+        <a routerLink="/dashboard-admin" routerLinkActive="active">
+          <span class="icon">📊</span>
+          <span class="text">Dashboard</span>
+        </a>
+      </li>
+
+      <li>
+        <a routerLink="/import-factures">
+          <span class="icon">📤</span>
+          <span class="text">Import facture</span>
+        </a>
+      </li>
+
+      <li>
+        <a routerLink="/liste-factures">
+          <span class="icon">📄</span>
+          <span class="text">Liste des factures</span>
+        </a>
+      </li>
+
+      <li>
+        <a routerLink="/validation">
+          <span class="icon">✔️</span>
+          <span class="text">Validation</span>
+        </a>
+      </li>
+
+      <li>
+        <a routerLink="/synchronisation">
+          <span class="icon">🔄</span>
+          <span class="text">Synchronisation</span>
+        </a>
+      </li>
+
+      <li>
+        <a routerLink="/reporting">
+          <span class="icon">📈</span>
+          <span class="text">Reporting</span>
+        </a>
+      </li>
+
+      <li>
+        <a routerLink="/gestion-utilisateurs">
+          <span class="icon">👥</span>
+          <span class="text">Utilisateurs</span>
+        </a>
+      </li>
+
+    </ul>
+
+    <div class="user-menu">
+      <div class="user-email">admin@mediasoft.fr</div>
+      <button class="logout" (click)="logout()">Déconnexion</button>
+    </div>
+
+  </aside>
+
+  <!-- Contenu principal -->
+  <div class="content">
+    <div class="page-header">
+      <h1>Reporting</h1>
+      <p>Analyse et statistiques des factures</p>
+    </div>
+
+ <div class="stats-cards">
+  <div class="card">
+    <h3>3 derniers mois</h3>
+    <div class="stats-grid">
+      <div class="stat-item">
+        <div class="stat-icon">📄</div>
+        <div class="stat-info">
+          <span class="stat-label">Total factures</span>
+          <span class="stat-value">5 <span class="change">(+12%)</span></span>
+        </div>
+      </div>
+
+      <div class="stat-item">
+        <div class="stat-icon">💰</div>
+        <div class="stat-info">
+          <span class="stat-label">Montant total</span>
+          <span class="stat-value">57k€ <span class="change">(+8%)</span></span>
+        </div>
+      </div>
+
+      <div class="stat-item">
+        <div class="stat-icon">✔️</div>
+        <div class="stat-info">
+          <span class="stat-label">Taux validation</span>
+          <span class="stat-value">20% <span class="change">(+5%)</span></span>
+        </div>
+      </div>
+
+      <div class="stat-item">
+        <div class="stat-icon">⏱️</div>
+        <div class="stat-info">
+          <span class="stat-label">Délai moyen</span>
+          <span class="stat-value">2.3j <span class="change">(+0.5j)</span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <div class="charts-row">
+      <div class="chart-card">
+        <h3>Répartition par statut</h3>
+        <canvas baseChart
+                [data]="statusChartData"
+                [type]="statusChartType"
+                [options]="statusChartOptions">
+        </canvas>
+      </div>
+      <div class="chart-card">
+        <h3>Évolution mensuelle</h3>
+        <canvas baseChart
+                [data]="monthlyChartData"
+                [type]="monthlyChartType"
+                [options]="monthlyChartOptions">
+        </canvas>
+      </div>
+      <div class="chart-card">
+        <h3>Top 5 fournisseurs</h3>
+        <canvas baseChart
+                [data]="topSuppliersData"
+                [type]="topSuppliersType"
+                [options]="topSuppliersOptions">
+        </canvas>
+      </div>
+    </div>
+  </div>
+
+</div>

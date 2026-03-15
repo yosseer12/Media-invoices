@@ -1,0 +1,123 @@
+/* Container principal */
+.auth-container {
+  display: flex;
+  height: 100vh;
+  font-family: 'Inter', Arial, sans-serif;
+}
+
+/* Panel gauche décoratif */
+.left-panel {
+  flex: 1;
+  background: linear-gradient(135deg, #4f46e5, #6366f1);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+}
+
+.left-panel h1 {
+  font-size: 40px;
+  margin-bottom: 10px;
+}
+
+.left-panel p {
+  font-size: 18px;
+  text-align: center;
+  max-width: 300px;
+}
+
+/* Card Register */
+.auth-card {
+  width: 420px;
+  background: white;
+  padding: 40px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  animation: fadeIn 0.7s ease;
+}
+
+/* Titres */
+.auth-card h2 {
+  font-size: 28px;
+  margin-bottom: 10px;
+  color: #1e293b;
+}
+
+.subtitle {
+  color: #6b7280;
+  margin-bottom: 25px;
+}
+
+/* Inputs */
+input {
+  width: 100%;
+  padding: 14px;
+  margin-bottom: 15px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: 0.3s;
+}
+
+input:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 6px rgba(99,102,241,0.4);
+}
+
+/* Bouton Register */
+button {
+  width: 100%;
+  padding: 14px;
+  margin-top: 10px;
+  background: #4f46e5;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover {
+  background: #4338ca;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+/* Lien vers Login */
+.switch {
+  margin-top: 20px;
+  font-size: 14px;
+  color: #475569;
+  text-align: center;
+}
+
+.switch a {
+  color: #4f46e5;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.switch a:hover {
+  text-decoration: underline;
+}
+
+/* Animation fadeIn */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

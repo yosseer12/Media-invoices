@@ -1,0 +1,83 @@
+.dashboard {
+  display: flex;
+  font-family: 'Inter', sans-serif;
+  height: 100vh;
+  background: #f6f8fb;
+}
+
+.sidebar {
+  width: 240px;
+  background: #1f2937;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  transition: 0.3s;
+}
+
+.sidebar.collapsed { width: 70px; }
+.sidebar .logo { font-size: 20px; font-weight: 600; margin-bottom: 20px; }
+
+.hamburger {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 25px;
+  height: 20px;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+.hamburger span { height: 3px; background: white; border-radius: 2px; }
+
+.nav-links { list-style: none; padding: 0; flex: 1; display: flex; flex-direction: column; gap: 10px; }
+.nav-links a { text-decoration: none; color: white; padding: 10px 12px; border-radius: 8px; }
+.nav-links a.active, .nav-links a:hover { background: #2563eb; }
+
+.user-menu { margin-top: auto; display: flex; flex-direction: column; gap: 10px; }
+.user-menu .logout { background: #ef4444; border: none; padding: 6px 12px; color: white; cursor: pointer; border-radius: 4px; }
+.user-menu .logout:hover { background: #dc2626; }
+
+.content {
+  flex: 1;
+  padding: 30px;
+  overflow-y: auto;
+}
+
+.back {
+  background: none;
+  border: none;
+  color: #2563eb;
+  font-size: 14px;
+  cursor: pointer;
+  margin-bottom: 15px;
+}
+
+.details-block {
+  background: white;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.05);
+}
+.sidebar.collapsed { width: 70px; }
+.sidebar.collapsed .nav-links li a { text-align: center; font-size: 0; }
+.sidebar.collapsed .logo { font-size: 18px; }
+.sidebar.collapsed .user-menu span { display: none; }
+.details-block h2 { margin-bottom: 5px; }
+.details-block p { margin: 2px 0; }
+
+.action-buttons { margin: 15px 0; display: flex; gap: 10px; }
+.action-buttons button { padding: 8px 14px; border: none; border-radius: 6px; cursor: pointer; color: white; font-weight: 500; }
+
+.download { background: #1d158f; }
+.download:hover { background: #4338ca; }
+
+.validate { background: #10b981; }
+.validate:hover { background: #059669; }
+
+.reject { background: #ef4444; }
+.reject:hover { background: #dc2626; }
+
+table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+th, td { padding: 10px; border-bottom: 1px solid #e5e7eb; text-align: left; }
+
+.totals-block { margin-top: 20px; background: #f9fafb; padding: 15px; border-radius: 8px; }

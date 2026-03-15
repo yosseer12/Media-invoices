@@ -1,0 +1,40 @@
+<div class="auth-container">
+
+<div class="left-panel">
+<h1>Join MediaSoft</h1>
+<p>Automate your invoices with AI</p>
+</div>
+
+<div class="auth-card">
+
+<h2>Create account</h2>
+
+<form [formGroup]="registerForm" (ngSubmit)="register()">
+
+<input
+type="text"
+placeholder="Company name"
+formControlName="name">
+
+<input
+type="email"
+placeholder="Email"
+formControlName="email">
+
+<input
+type="password"
+placeholder="Password"
+formControlName="password">
+
+<button>Create account</button>
+
+</form>
+
+<p class="switch">
+  Already have an account ?
+  <a routerLink="/login">Sign in</a>
+</p>
+
+</div>
+
+</div>

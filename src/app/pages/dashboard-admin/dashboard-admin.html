@@ -1,0 +1,140 @@
+<div class="dashboard">
+
+  <!-- Sidebar -->
+  <aside class="sidebar" [class.collapsed]="isCollapsed">
+
+    <div class="sidebar-top">
+      <div class="logo">MediaSoft</div>
+
+      <!-- bouton réduire -->
+      <div class="toggle-btn" (click)="toggleSidebar()">
+        ☰
+      </div>
+    </div>
+
+    <ul class="nav-links">
+
+      <li>
+        <a routerLink="/dashboard-admin" routerLinkActive="active">
+          <span class="icon">📊</span>
+          <span class="text">Dashboard</span>
+        </a>
+      </li>
+
+      <li>
+        <a routerLink="/import-factures">
+          <span class="icon">📤</span>
+          <span class="text">Import facture</span>
+        </a>
+      </li>
+
+      <li>
+        <a routerLink="/liste-factures">
+          <span class="icon">📄</span>
+          <span class="text">Liste des factures</span>
+        </a>
+      </li>
+
+      <li>
+        <a routerLink="/validation">
+          <span class="icon">✔️</span>
+          <span class="text">Validation</span>
+        </a>
+      </li>
+
+      <li>
+        <a routerLink="/sync-divalto">
+          <span class="icon">🔄</span>
+          <span class="text">Synchronisation</span>
+        </a>
+      </li>
+
+      <li>
+        <a routerLink="/reporting">
+          <span class="icon">📈</span>
+          <span class="text">Reporting</span>
+        </a>
+      </li>
+
+      <li>
+        <a routerLink="/gestion-utilisateurs">
+          <span class="icon">👥</span>
+          <span class="text">Utilisateurs</span>
+        </a>
+      </li>
+
+    </ul>
+
+    <div class="user-menu">
+      <div class="user-email">admin@mediasoft.fr</div>
+      <button class="logout" (click)="logout()">Déconnexion</button>
+    </div>
+
+  </aside>
+
+  <!-- CONTENT -->
+  <main class="content">
+
+    <header>
+      <h1>Dashboard</h1>
+      <p>Gestion des factures fournisseurs</p>
+    </header>
+
+ 
+    <!-- Cartes statistiques -->
+    <div class="cards">
+      <div class="card" *ngFor="let stat of stats" [style.borderTopColor]="stat.color">
+        <h3>{{ stat.title }}</h3>
+        <p *ngIf="stat.title.includes('Montant')">{{ stat.value | currency:'EUR':'symbol':'1.2-2' }}</p>
+        <p *ngIf="!stat.title.includes('Montant')">{{ stat.value }}</p>
+      </div>
+    </div>
+
+    <!-- Totaux & Performance -->
+    <div class="totals">
+      <div class="total">
+        <h3>Montant total</h3>
+        <p>{{ totalAmount | currency:'EUR':'symbol':'1.2-2' }}</p>
+        <small>Dont {{ pendingAmount | currency:'EUR':'symbol':'1.2-2' }} en attente de validation</small>
+      </div>
+      <div class="performance">
+        <h3>Performance</h3>
+        <p>Taux de validation: {{ performance.validation }}%</p>
+        <p>Taux de rejet: {{ performance.rejection }}%</p>
+      </div>
+    </div>
+
+    <!-- Tableau factures récentes -->
+    <div class="table-section">
+      <h3>Factures récentes</h3>
+<a routerLink="/liste-factures" class="view-all">Voir tout</a>
+      <table>
+        <thead>
+          <tr>
+            <th>N° Facture</th>
+            <th>Fournisseur</th>
+            <th>Date</th>
+            <th>Montant</th>
+            <th>Statut</th>
+            <th>Import</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let inv of invoices" class="table-row">
+            <td>{{ inv.number }}</td>
+            <td>{{ inv.supplier }}</td>
+            <td>{{ inv.date }}</td>
+            <td>{{ inv.amount | currency:'EUR':'symbol':'1.2-2' }}</td>
+            <td>
+              <span class="status" [ngClass]="inv.status.toLowerCase().replace(' ', '-')">
+                {{ inv.status }}
+              </span>
+            </td>
+            <td>{{ inv.import }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+</div>
