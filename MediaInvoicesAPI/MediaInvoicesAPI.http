@@ -1,0 +1,6 @@
+@MediaInvoicesAPI_HostAddress = http://localhost:5110
+
+GET {{MediaInvoicesAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
