@@ -1,0 +1,17 @@
+<div class="timeline">
+  <div *ngFor="let h of historique" class="timeline-item">
+
+    <div class="dot"></div>
+
+    <div class="content">
+      <h4>{{ h.action }}</h4>
+
+      <p>{{ h.dateAction | date:'dd/MM/yyyy HH:mm' }}</p>
+
+      <p *ngIf="h.motifRejet">
+        Motif : {{ h.motifRejet }}
+      </p>
+    </div>
+
+  </div>
+</div>

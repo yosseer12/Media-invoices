@@ -1,0 +1,101 @@
+<div class="page-content" [style.paddingTop.px]="navbarHeight">
+  <app-navbar></app-navbar>
+
+  <div class="container">
+    <h2>Factures en attente</h2>
+
+    <div *ngIf="loading" class="loading">
+      Chargement...
+    </div>
+
+    <div *ngIf="!loading && errorMessage" class="error">
+      {{ errorMessage }}
+    </div>
+
+    <div *ngIf="!loading && factures.length > 0">
+      <div *ngFor="let f of factures" class="facture-card">
+
+        <div>
+          <strong>Numéro :</strong> {{ f.numeroFacture }}
+        </div>
+
+        <div>
+          <strong>Fournisseur :</strong> {{ f.nomFournisseur }}
+        </div>
+
+        <div>
+          <strong>Montant TTC :</strong>
+          {{ f.montantTtc | number:'1.2-2' }} TND
+        </div>
+
+        <div class="buttons">
+          <button class="btn-pdf" (click)="ouvrirPdf(f.cheminFichier)">
+            Voir PDF
+          </button>
+
+          <button class="btn-valider" (click)="validerFacture(f.idFacture)">
+            Valider
+          </button>
+
+          <button class="btn-rejeter" (click)="rejeterFacture(f.idFacture)">
+            Rejeter
+          </button>
+        </div>
+<div *ngIf="histoStandaloneVisible" class="histo-standalone">
+  <div class="histo-standalone-header">
+    <span>Historique — Facture #{{ histoStandaloneId }}</span>
+    <button (click)="fermerHistoStandalone()">✕ Fermer</button>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>Action</th>
+        <th>Date</th>
+        <th>Motif</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let h of histoStandalone">
+        <td>{{ h.action }}</td>
+        <td>{{ h.dateAction | date:'dd/MM/yyyy HH:mm' }}</td>
+        <td>{{ h.motifRejet ?? '—' }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+      <!-- Historique -->
+<div class="historique-section">
+  <h6>Historique des modifications</h6>
+
+  <button class="btn-pdf" (click)="toggleHistorique(f)">
+    {{ f.showHisto ? 'Masquer historique' : 'Voir historique' }}
+  </button>
+
+  <div *ngIf="f.showHisto">
+
+    <div *ngIf="f.loadingHisto">
+      Chargement historique...
+    </div>
+
+    <div *ngIf="!f.loadingHisto && f.historique.length === 0">
+      Aucun historique
+    </div>
+
+    <div *ngFor="let h of f.historique" class="timeline-item">
+
+      <div class="timeline-action">
+        <strong>{{ h.action }}</strong>
+      </div>
+
+      <div class="timeline-date">
+        {{ h.dateAction | date:'short' }}
+      </div>
+
+      <div *ngIf="h.motifRejet" class="timeline-motif">
+        Motif : {{ h.motifRejet }}
+      </div>
+
+    </div>
+
+  </div>
+</div>

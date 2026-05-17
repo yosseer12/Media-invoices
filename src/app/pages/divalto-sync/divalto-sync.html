@@ -1,0 +1,478 @@
+  
+<app-navbar></app-navbar>
+<div class="page-content"><div class="divalto-page">
+  <!-- ══════════════════════════════════════════════════════
+       HEADER
+  ══════════════════════════════════════════════════════ -->
+  <header class="page-header">
+    <div class="header-left">
+      <div class="header-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+          <path d="M2 17l10 5 10-5"/>
+          <path d="M2 12l10 5 10-5"/>
+        </svg>
+      </div>
+      <div>
+        <h1>Synchronisation Divalto</h1>
+        <p class="header-sub">Intégration ERP · Gestion des flux de données</p>
+      </div>
+    </div>
+
+    <div class="header-right">
+      <!-- Badge connexion -->
+      <div class="connection-badge" [class.connected]="status.connected" [class.disconnected]="!status.connected">
+        <span class="badge-dot"></span>
+        {{ status.connected ? 'Connecté' : 'Déconnecté' }}
+      </div>
+
+      <!-- Bouton sync -->
+      <button class="btn-sync-main" (click)="syncNow()" [disabled]="syncing || !status.connected">
+        <span class="btn-icon" [class.spinning]="syncing">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0118.8-4.3M22 12.5a10 10 0 01-18.8 4.2"/>
+          </svg>
+        </span>
+        {{ syncing ? 'Synchronisation...' : 'Synchroniser maintenant' }}
+      </button>
+    </div>
+  </header>
+
+  <!-- Bannière résultat sync -->
+  <div class="sync-banner success" *ngIf="syncResult === 'success'">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+    {{ syncMessage }}
+  </div>
+  <div class="sync-banner error" *ngIf="syncResult === 'error'">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg>
+    {{ syncMessage }}
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       TABS
+  ══════════════════════════════════════════════════════ -->
+  <nav class="tabs">
+    <button class="tab" [class.active]="activeTab === 'overview'" (click)="activeTab = 'overview'">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      Vue d'ensemble
+    </button>
+    <button class="tab" [class.active]="activeTab === 'config'" (click)="activeTab = 'config'">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M4.93 19.07l1.41-1.41M19.07 19.07l-1.41-1.41M21 12h-2M5 12H3M12 3V1M12 23v-2"/></svg>
+      Configuration
+    </button>
+    <button class="tab" [class.active]="activeTab === 'factures'" (click)="activeTab = 'factures'">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      Factures en attente
+      <span class="tab-badge" *ngIf="factures.length">{{ factures.length }}</span>
+    </button>
+    <button class="tab" [class.active]="activeTab === 'logs'" (click)="activeTab = 'logs'">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><path d="M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z"/></svg>
+      Logs de synchronisation
+      <span class="tab-badge error" *ngIf="errorLogs > 0">{{ errorLogs }}</span>
+    </button>
+  </nav>
+
+  <!-- ══════════════════════════════════════════════════════
+       LOADING
+  ══════════════════════════════════════════════════════ -->
+  <div class="loading-screen" *ngIf="loading">
+    <div class="loader-ring"></div>
+    <p>Chargement des données...</p>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       TAB : VUE D'ENSEMBLE
+  ══════════════════════════════════════════════════════ -->
+  <div class="tab-content" *ngIf="!loading && activeTab === 'overview'">
+
+    <!-- KPI Cards -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-icon blue">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        </div>
+        <div class="kpi-body">
+          <div class="kpi-value">{{ totalLogs }}</div>
+          <div class="kpi-label">Total synchronisations</div>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon green">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+        </div>
+        <div class="kpi-body">
+          <div class="kpi-value">{{ successLogs }}</div>
+          <div class="kpi-label">Succès</div>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon red">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg>
+        </div>
+        <div class="kpi-body">
+          <div class="kpi-value">{{ errorLogs }}</div>
+          <div class="kpi-label">Erreurs</div>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon orange">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
+        <div class="kpi-body">
+          <div class="kpi-value">{{ doublonLogs }}</div>
+          <div class="kpi-label">Doublons détectés</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Taux de succès -->
+    <div class="section-grid">
+
+      <div class="card">
+        <div class="card-header">
+          <h3>Taux de succès</h3>
+          <span class="kpi-rate" [class.good]="successRate >= 80" [class.warn]="successRate >= 50 && successRate < 80" [class.bad]="successRate < 50">
+            {{ successRate }}%
+          </span>
+        </div>
+        <div class="progress-bar-wrap">
+          <div class="progress-bar" [style.width.%]="successRate" [class.good]="successRate >= 80" [class.warn]="successRate >= 50 && successRate < 80" [class.bad]="successRate < 50"></div>
+        </div>
+        <p class="card-hint">{{ successLogs }} succès sur {{ totalLogs }} synchronisations</p>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3>État de la synchronisation</h3>
+        </div>
+        <div class="status-rows">
+          <div class="status-row">
+            <span class="label">Mode d'intégration</span>
+            <span class="value chip blue">{{ config.mode === 'rest' ? 'API REST' : 'Web Services' }}</span>
+          </div>
+          <div class="status-row">
+            <span class="label">Auto-sync</span>
+            <span class="value chip" [class.green]="status.autoSyncEnabled" [class.gray]="!status.autoSyncEnabled">
+              {{ status.autoSyncEnabled ? 'Activée' : 'Désactivée' }}
+            </span>
+          </div>
+          <div class="status-row" *ngIf="status.autoSyncEnabled">
+            <span class="label">Prochaine sync</span>
+            <span class="value">Dans {{ status.nextSyncInMinutes }} min</span>
+          </div>
+          <div class="status-row" *ngIf="status.lastSyncAt">
+            <span class="label">Dernière sync</span>
+            <span class="value">{{ status.lastSyncAt | date:'dd/MM/yyyy HH:mm' }}</span>
+          </div>
+          <div class="status-row" *ngIf="status.lastSyncSuccess !== null">
+            <span class="label">Résultat</span>
+            <span class="value chip" [class.green]="status.lastSyncSuccess" [class.red]="!status.lastSyncSuccess">
+              {{ status.lastSyncSuccess ? 'Succès' : 'Échec' }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Règles d'intégration -->
+    <div class="card">
+      <div class="card-header"><h3>Règles d'intégration actives</h3></div>
+      <div class="rules-grid">
+        <div class="rule-item">
+          <div class="rule-icon green"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg></div>
+          <div>
+            <div class="rule-title">Contrôle des doublons</div>
+            <div class="rule-desc">Détection automatique des factures déjà synchronisées par référence</div>
+          </div>
+        </div>
+        <div class="rule-item">
+          <div class="rule-icon blue"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+          <div>
+            <div class="rule-title">Gestion des erreurs</div>
+            <div class="rule-desc">Retry automatique · Isolation des échecs · Aucune perte de données</div>
+          </div>
+        </div>
+        <div class="rule-item">
+          <div class="rule-icon orange"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+          <div>
+            <div class="rule-title">Logs de synchronisation</div>
+            <div class="rule-desc">Traçabilité complète · Horodatage · Statut par facture</div>
+          </div>
+        </div>
+        <div class="rule-item">
+          <div class="rule-icon purple"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+          <div>
+            <div class="rule-title">Sync planifiée</div>
+            <div class="rule-desc">Fréquence configurable · Exécution en arrière-plan</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       TAB : CONFIGURATION
+  ══════════════════════════════════════════════════════ -->
+  <div class="tab-content" *ngIf="!loading && activeTab === 'config'">
+
+    <div class="config-grid">
+
+      <!-- Connexion -->
+      <div class="card">
+        <div class="card-header"><h3>Connexion Divalto</h3></div>
+
+        <div class="form-group">
+          <label>Mode d'intégration</label>
+          <div class="mode-toggle">
+            <button class="mode-btn" [class.active]="config.mode === 'rest'" (click)="config.mode = 'rest'">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/><path d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"/></svg>
+              API REST
+            </button>
+            <button class="mode-btn" [class.active]="config.mode === 'webservice'" (click)="config.mode = 'webservice'">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+              Web Services
+            </button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>URL de l'ERP</label>
+          <input class="form-input" [(ngModel)]="config.url" placeholder="https://divalto.monentreprise.com/api" />
+        </div>
+
+        <div class="form-group">
+          <label>Base de données</label>
+          <input class="form-input" [(ngModel)]="config.databaseName" placeholder="NOM_BDD_DIVALTO" />
+        </div>
+
+        <div class="form-group">
+          <label>Nom d'utilisateur</label>
+          <input class="form-input" [(ngModel)]="config.username" placeholder="admin" />
+        </div>
+
+        <div class="form-group">
+          <label>Mot de passe</label>
+          <div class="input-with-toggle">
+            <input class="form-input" [(ngModel)]="config.password" [type]="showPassword ? 'text' : 'password'" placeholder="••••••••" />
+            <button class="toggle-pw" (click)="showPassword = !showPassword">
+              <svg *ngIf="!showPassword" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              <svg *ngIf="showPassword" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Résultat test -->
+        <div class="alert success" *ngIf="connectionTestResult === 'success'">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+          {{ connectionTestMessage }}
+        </div>
+        <div class="alert error" *ngIf="connectionTestResult === 'error'">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg>
+          {{ connectionTestMessage }}
+        </div>
+
+        <div class="btn-row">
+          <button class="btn-outline" (click)="testConnection()" [disabled]="testingConnection">
+            <span [class.spinning]="testingConnection">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0118.8-4.3M22 12.5a10 10 0 01-18.8 4.2"/></svg>
+            </span>
+            {{ testingConnection ? 'Test en cours...' : 'Tester la connexion' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Sync planifiée -->
+      <div class="card">
+        <div class="card-header"><h3>Synchronisation planifiée</h3></div>
+
+        <div class="toggle-row">
+          <div>
+            <div class="toggle-label">Synchronisation automatique</div>
+            <div class="toggle-desc">Sync périodique sans intervention manuelle</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" [(ngModel)]="status.autoSyncEnabled" (change)="toggleAutoSync()" />
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="form-group" *ngIf="status.autoSyncEnabled">
+          <label>Fréquence de synchronisation</label>
+          <div class="freq-options">
+            <label class="freq-opt" *ngFor="let freq of [15, 30, 60, 120]">
+              <input type="radio" [(ngModel)]="config.syncFrequency" [value]="freq" />
+              <span>
+                {{ freq < 60 ? freq + ' min' : (freq / 60) + 'h' }}
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <div class="info-box" *ngIf="status.autoSyncEnabled && status.nextSyncInMinutes">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Prochaine synchronisation dans <strong>{{ status.nextSyncInMinutes }} minutes</strong>
+        </div>
+
+        <!-- Règles -->
+        <div class="card-header" style="margin-top: 24px"><h3>Règles d'intégration</h3></div>
+
+        <div class="rules-toggles">
+          <div class="toggle-row small">
+            <div>
+              <div class="toggle-label">Contrôle des doublons</div>
+              <div class="toggle-desc">Ignorer les factures déjà synchronisées</div>
+            </div>
+            <label class="switch small">
+              <input type="checkbox" checked disabled />
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div class="toggle-row small">
+            <div>
+              <div class="toggle-label">Logs automatiques</div>
+              <div class="toggle-desc">Enregistrer chaque opération de sync</div>
+            </div>
+            <label class="switch small">
+              <input type="checkbox" checked disabled />
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div class="toggle-row small">
+            <div>
+              <div class="toggle-label">Retry en cas d'erreur</div>
+              <div class="toggle-desc">3 tentatives avant abandon</div>
+            </div>
+            <label class="switch small">
+              <input type="checkbox" checked disabled />
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Save result -->
+        <div class="alert success" *ngIf="saveConfigResult === 'success'">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+          Configuration enregistrée avec succès
+        </div>
+        <div class="alert error" *ngIf="saveConfigResult === 'error'">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg>
+          Erreur lors de la sauvegarde
+        </div>
+
+        <div class="btn-row" style="margin-top: 24px">
+          <button class="btn-primary" (click)="saveConfig()" [disabled]="savingConfig">
+            {{ savingConfig ? 'Enregistrement...' : 'Enregistrer la configuration' }}
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       TAB : FACTURES EN ATTENTE
+  ══════════════════════════════════════════════════════ -->
+  <div class="tab-content" *ngIf="!loading && activeTab === 'factures'">
+
+    <div class="card">
+      <div class="card-header">
+        <h3>Factures en attente de synchronisation</h3>
+        <span class="count-badge">{{ factures.length }}</span>
+      </div>
+
+      <div class="empty-state" *ngIf="factures.length === 0">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 6L9 17l-5-5"/></svg>
+        <p>Aucune facture en attente</p>
+        <span>Toutes les factures ont été synchronisées avec Divalto</span>
+      </div>
+
+      <table class="data-table" *ngIf="factures.length > 0">
+        <thead>
+          <tr>
+            <th>N° Facture</th>
+            <th>Fournisseur</th>
+            <th>Date</th>
+            <th>Montant TTC</th>
+            <th>Statut</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let f of factures">
+            <td><span class="mono">{{ f.numeroFacture || '—' }}</span></td>
+            <td>{{ f.nomFournisseur || '—' }}</td>
+            <td>{{ f.dateFacture ? (f.dateFacture | date:'dd/MM/yyyy') : '—' }}</td>
+            <td><strong>{{ f.montantTtc | number:'1.2-2' }} {{ f.devise }}</strong></td>
+            <td>
+              <span class="chip" [class.orange]="f.statut === 'En attente'" [class.green]="f.statut === 'Validée'" [class.red]="f.statut === 'Rejetée'">
+                {{ f.statut }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       TAB : LOGS
+  ══════════════════════════════════════════════════════ -->
+  <div class="tab-content" *ngIf="!loading && activeTab === 'logs'">
+
+    <div class="card">
+      <div class="card-header">
+        <h3>Logs de synchronisation</h3>
+        <div class="log-actions">
+          <input class="search-input" [(ngModel)]="searchLog" placeholder="Rechercher..." />
+          <div class="filter-pills">
+            <button class="pill" [class.active]="logFilter === 'all'" (click)="logFilter = 'all'">Tous</button>
+            <button class="pill success" [class.active]="logFilter === 'success'" (click)="logFilter = 'success'">Succès</button>
+            <button class="pill error" [class.active]="logFilter === 'error'" (click)="logFilter = 'error'">Erreurs</button>
+            <button class="pill warn" [class.active]="logFilter === 'doublon'" (click)="logFilter = 'doublon'">Doublons</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="empty-state" *ngIf="filteredLogs.length === 0">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12l2 2 4-4"/><path d="M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z"/></svg>
+        <p>Aucun log trouvé</p>
+      </div>
+
+      <table class="data-table" *ngIf="filteredLogs.length > 0">
+        <thead>
+          <tr>
+            <th>Statut</th>
+            <th>Référence</th>
+            <th>Fournisseur</th>
+            <th>Montant</th>
+            <th>Date sync</th>
+            <th>Détail</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let log of filteredLogs" [class.row-error]="!log.success">
+            <td>
+              <span class="status-dot" [class.green]="log.success && !log.doublonDetecte" [class.red]="!log.success" [class.orange]="log.doublonDetecte"></span>
+              <span *ngIf="log.success && !log.doublonDetecte">Succès</span>
+              <span *ngIf="!log.success">Erreur</span>
+              <span *ngIf="log.doublonDetecte">Doublon</span>
+            </td>
+            <td><span class="mono">{{ log.factureRef }}</span></td>
+            <td>{{ log.fournisseur }}</td>
+            <td>{{ log.montant | number:'1.2-2' }} {{ log.devise }}</td>
+            <td>{{ log.syncedAt | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td>
+              <span class="error-msg" *ngIf="log.errorMessage">{{ log.errorMessage }}</span>
+              <span class="muted" *ngIf="!log.errorMessage">—</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>

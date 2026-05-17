@@ -1,0 +1,275 @@
+/* =========================
+   GLOBAL
+========================= */
+:host {
+  display: block;
+  min-height: 100vh;
+  background: #f4f7fb;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  color: #1f2937;
+}
+
+/* =========================
+   PAGE LAYOUT
+========================= */
+.page-content {
+  margin-left: 220px;
+  padding: 30px;
+  transition: margin-left 0.3s ease;
+}
+
+.container {
+  max-width: 1200px;
+  margin: auto;
+}
+
+/* =========================
+   TITLE
+========================= */
+h2 {
+  font-size: 30px;
+  font-weight: 700;
+  margin-bottom: 30px;
+  color: #111827;
+  letter-spacing: -0.5px;
+}
+
+/* =========================
+   LOADING / ERROR
+========================= */
+.loading,
+.error {
+  padding: 16px;
+  border-radius: 12px;
+  font-size: 15px;
+  margin-bottom: 20px;
+}
+
+.loading {
+  background: #eef4ff;
+  color: #2563eb;
+  border: 1px solid #c7d2fe;
+}
+
+.error {
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+}
+
+/* =========================
+   FACTURE CARD
+========================= */
+.facture-card {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 24px;
+  margin-bottom: 24px;
+  border: 1px solid #e5e7eb;
+  box-shadow:
+    0 4px 10px rgba(0, 0, 0, 0.04),
+    0 10px 25px rgba(0, 0, 0, 0.03);
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.facture-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 6px;
+  height: 100%;
+  background: linear-gradient(to bottom, #2563eb, #3b82f6);
+}
+
+.facture-card:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 10px 20px rgba(0, 0, 0, 0.06),
+    0 15px 35px rgba(0, 0, 0, 0.08);
+}
+
+/* =========================
+   INFOS
+========================= */
+.facture-card > div {
+  margin-bottom: 12px;
+  font-size: 15px;
+  color: #374151;
+}
+
+.facture-card strong {
+  color: #111827;
+  font-weight: 600;
+}
+
+/* =========================
+   BUTTONS
+========================= */
+.buttons {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+  margin-bottom: 15px;
+}
+
+button {
+  border: none;
+  outline: none;
+  padding: 11px 18px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+button:hover {
+  transform: translateY(-2px);
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+/* PDF */
+.btn-pdf {
+  background: #2563eb;
+  color: white;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+}
+
+.btn-pdf:hover {
+  background: #1d4ed8;
+}
+
+/* Validate */
+.btn-valider {
+  background: #10b981;
+  color: white;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+}
+
+.btn-valider:hover {
+  background: #059669;
+}
+
+/* Reject */
+.btn-rejeter {
+  background: #ef4444;
+  color: white;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+}
+
+.btn-rejeter:hover {
+  background: #dc2626;
+}
+
+/* =========================
+   HISTORIQUE SECTION
+========================= */
+.historique-section {
+  margin-top: 25px;
+  padding-top: 20px;
+  border-top: 1px solid #e5e7eb;
+}
+
+h6 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 18px;
+}
+
+/* =========================
+   TIMELINE
+========================= */
+.timeline-item {
+  position: relative;
+  padding-left: 24px;
+  margin-bottom: 18px;
+  border-left: 2px solid #dbeafe;
+}
+
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: -7px;
+  top: 4px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #2563eb;
+  border: 2px solid white;
+  box-shadow: 0 0 0 3px #dbeafe;
+}
+
+.timeline-action {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.timeline-date {
+  font-size: 13px;
+  color: #64748b;
+  margin-top: 4px;
+}
+
+.timeline-motif {
+  margin-top: 6px;
+  font-size: 13px;
+  color: #dc2626;
+  background: #fef2f2;
+  padding: 8px 12px;
+  border-radius: 8px;
+  display: inline-block;
+}
+
+/* =========================
+   EMPTY MESSAGE
+========================= */
+.empty-message {
+  padding: 15px;
+  border-radius: 12px;
+  background: #f9fafb;
+  color: #6b7280;
+  font-size: 14px;
+  border: 1px dashed #d1d5db;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 992px) {
+  .page-content {
+    margin-left: 0;
+    padding: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  h2 {
+    font-size: 24px;
+  }
+
+  .facture-card {
+    padding: 18px;
+  }
+
+  .buttons {
+    flex-direction: column;
+  }
+
+  button {
+    width: 100%;
+  }
+}

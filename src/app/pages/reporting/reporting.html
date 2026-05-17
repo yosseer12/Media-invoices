@@ -1,150 +1,78 @@
-<div class="dashboard">
+<app-navbar></app-navbar>
+<div class="page-content"><div class="reporting-page">
 
-  <!-- Sidebar -->
-  <!-- Sidebar -->
-<aside class="sidebar" [class.collapsed]="isCollapsed">
+  <!-- HEADER -->
+  <div class="page-header">
+    <h2>Reporting</h2>
+    <p>Synthèse financière et analyse des factures</p>
+  </div>
 
-    <div class="sidebar-top">
-      <div class="logo">MediaSoft</div>
+  <!-- LOADING -->
+  <div *ngIf="loading" class="loading">
+    Chargement...
+  </div>
 
-      <!-- bouton réduire -->
-      <div class="toggle-btn" (click)="toggleSidebar()">
-        ☰
-      </div>
+  <!-- KPI -->
+  <div *ngIf="!loading" class="stats-grid">
+
+    <div class="stat-card blue">
+      <div class="stat-label">Total factures</div>
+      <div class="stat-value">{{ report?.totalFactures }}</div>
     </div>
 
-    <ul class="nav-links">
-
-      <li>
-        <a routerLink="/dashboard-admin" routerLinkActive="active">
-          <span class="icon">📊</span>
-          <span class="text">Dashboard</span>
-        </a>
-      </li>
-
-      <li>
-        <a routerLink="/import-factures">
-          <span class="icon">📤</span>
-          <span class="text">Import facture</span>
-        </a>
-      </li>
-
-      <li>
-        <a routerLink="/liste-factures">
-          <span class="icon">📄</span>
-          <span class="text">Liste des factures</span>
-        </a>
-      </li>
-
-      <li>
-        <a routerLink="/validation">
-          <span class="icon">✔️</span>
-          <span class="text">Validation</span>
-        </a>
-      </li>
-
-      <li>
-        <a routerLink="/synchronisation">
-          <span class="icon">🔄</span>
-          <span class="text">Synchronisation</span>
-        </a>
-      </li>
-
-      <li>
-        <a routerLink="/reporting">
-          <span class="icon">📈</span>
-          <span class="text">Reporting</span>
-        </a>
-      </li>
-
-      <li>
-        <a routerLink="/gestion-utilisateurs">
-          <span class="icon">👥</span>
-          <span class="text">Utilisateurs</span>
-        </a>
-      </li>
-
-    </ul>
-
-    <div class="user-menu">
-      <div class="user-email">admin@mediasoft.fr</div>
-      <button class="logout" (click)="logout()">Déconnexion</button>
+    <div class="stat-card green">
+      <div class="stat-label">Total HT</div>
+      <div class="stat-value">{{ report?.totalHT }} DT</div>
     </div>
 
-  </aside>
-
-  <!-- Contenu principal -->
-  <div class="content">
-    <div class="page-header">
-      <h1>Reporting</h1>
-      <p>Analyse et statistiques des factures</p>
+    <div class="stat-card amber">
+      <div class="stat-label">Total TTC</div>
+      <div class="stat-value">{{ report?.totalTTC }} DT</div>
     </div>
 
- <div class="stats-cards">
-  <div class="card">
-    <h3>3 derniers mois</h3>
-    <div class="stats-grid">
-      <div class="stat-item">
-        <div class="stat-icon">📄</div>
-        <div class="stat-info">
-          <span class="stat-label">Total factures</span>
-          <span class="stat-value">5 <span class="change">(+12%)</span></span>
-        </div>
-      </div>
-
-      <div class="stat-item">
-        <div class="stat-icon">💰</div>
-        <div class="stat-info">
-          <span class="stat-label">Montant total</span>
-          <span class="stat-value">57k€ <span class="change">(+8%)</span></span>
-        </div>
-      </div>
-
-      <div class="stat-item">
-        <div class="stat-icon">✔️</div>
-        <div class="stat-info">
-          <span class="stat-label">Taux validation</span>
-          <span class="stat-value">20% <span class="change">(+5%)</span></span>
-        </div>
-      </div>
-
-      <div class="stat-item">
-        <div class="stat-icon">⏱️</div>
-        <div class="stat-info">
-          <span class="stat-label">Délai moyen</span>
-          <span class="stat-value">2.3j <span class="change">(+0.5j)</span></span>
-        </div>
-      </div>
+    <div class="stat-card purple">
+      <div class="stat-label">TVA</div>
+      <div class="stat-value">{{ report?.totalTVA }} DT</div>
     </div>
+
+  </div>
+
+  <!-- CHARTS -->
+  <div *ngIf="!loading && report" class="charts-grid">
+
+    <!-- TOP FOURNISSEURS -->
+    <div class="chart-card">
+      <div class="chart-title">Top 5 fournisseurs</div>
+      <canvas
+        baseChart
+        [data]="topSuppliersData"
+        [type]="topSuppliersType"
+        [options]="topSuppliersOptions">
+      </canvas>
+    </div>
+
+    <!-- ÉVOLUTION MENSUELLE -->
+    <div class="chart-card">
+      <div class="chart-title">Évolution mensuelle</div>
+      <canvas
+        baseChart
+        [data]="monthlyChartData"
+        [type]="monthlyChartType"
+        [options]="monthlyChartOptions">
+      </canvas>
+    </div>
+
+  </div>
+<div class="chart-card">
+  <div class="chart-title">Statut des factures</div>
+
+  <div class="status-chart">
+    <canvas
+      baseChart
+      [data]="statusChartData"
+      [type]="statusChartType"
+      [options]="statusChartOptions">
+    </canvas>
   </div>
 </div>
 
-    <div class="charts-row">
-      <div class="chart-card">
-        <h3>Répartition par statut</h3>
-        <canvas baseChart
-                [data]="statusChartData"
-                [type]="statusChartType"
-                [options]="statusChartOptions">
-        </canvas>
-      </div>
-      <div class="chart-card">
-        <h3>Évolution mensuelle</h3>
-        <canvas baseChart
-                [data]="monthlyChartData"
-                [type]="monthlyChartType"
-                [options]="monthlyChartOptions">
-        </canvas>
-      </div>
-      <div class="chart-card">
-        <h3>Top 5 fournisseurs</h3>
-        <canvas baseChart
-                [data]="topSuppliersData"
-                [type]="topSuppliersType"
-                [options]="topSuppliersOptions">
-        </canvas>
-      </div>
-    </div>
-  </div>
-
-</div>

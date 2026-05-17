@@ -1,0 +1,20 @@
+<aside class="sidebar" [class.collapsed]="isCollapsed">
+  <div class="logo">MediaSoft</div>
+
+  <div class="toggle-btn" (click)="toggleSidebar()">☰</div>
+
+  <ul class="nav-links">
+    <li><a routerLink="/dashboard-admin" routerLinkActive="active">📊 Dashboard</a></li>
+    <li><a routerLink="/facture-upload" routerLinkActive="active">📤 Import</a></li>
+    <li><a routerLink="/liste-factures" routerLinkActive="active">📄 Liste</a></li>
+    <li><a routerLink="/validation" routerLinkActive="active">✔ Validation</a></li>
+    <li><a routerLink="/synchronisation" routerLinkActive="active">🔄 Sync</a></li>
+    <li><a routerLink="/reporting" routerLinkActive="active">📈 Reporting</a></li>
+    <li><a routerLink="/gestion-utilisateurs" routerLinkActive="active">👥 Users</a></li>
+  </ul>
+
+  <div class="user-menu">
+  <div>{{ user?.email || user?.nom || 'Utilisateur' }}</div>
+  <button (click)="logout()">Déconnexion</button>
+</div>
+</aside>

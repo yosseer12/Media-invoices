@@ -1,0 +1,177 @@
+<!-- import-facture.html -->
+<!-- FACTURE -->
+ <app-navbar></app-navbar>
+<div class="page-content">
+<div class="import-page">
+
+  <div class="page-header">
+    <h1>Import de factures</h1>
+    <p>Importez vos factures PDF avec extraction automatique des données</p>
+  </div>
+
+  <!-- Stepper -->
+  <div class="stepper">
+    <div class="step" [class.active]="step===1" [class.done]="step>1">
+      <div class="step-num">{{ step > 1 ? '✓' : '1' }}</div>
+      <div class="step-label">Upload PDF</div>
+    </div>
+    <div class="step-line"></div>
+    <div class="step" [class.active]="step===2" [class.done]="step>2">
+      <div class="step-num">{{ step > 2 ? '✓' : '2' }}</div>
+      <div class="step-label">Extraction OCR</div>
+    </div>
+    <div class="step-line"></div>
+    <div class="step" [class.active]="step===3" [class.done]="step>3">
+      <div class="step-num">{{ step > 3 ? '✓' : '3' }}</div>
+      <div class="step-label">Vérification</div>
+    </div>
+    <div class="step-line"></div>
+    <div class="step" [class.active]="step===4">
+      <div class="step-num">{{ step === 4 ? '✓' : '4' }}</div>
+      <div class="step-label">Enregistré</div>
+    </div>
+  </div>
+
+  <!-- STEP 1 : Upload -->
+  <div *ngIf="step === 1">
+    <div class="upload-zone"
+         (dragover)="onDragOver($event)"
+         (drop)="onDrop($event)">
+      <div class="upload-icon">📄</div>
+      <h3>Cliquez pour sélectionner un fichier PDF</h3>
+      <p>ou glissez-déposez votre fichier ici</p>
+      <p class="hint">Format accepté : PDF uniquement · max 10 MB</p>
+      <input type="file" accept=".pdf" (change)="onFileSelected($event)">
+    </div>
+
+    <div class="file-preview" *ngIf="selectedFile">
+      <div class="file-icon">📕</div>
+      <div class="file-info">
+        <div class="file-name">{{ selectedFile.name }}</div>
+        <div class="file-size">{{ fileSize }}</div>
+      </div>
+      <button class="btn-remove" (click)="removeFile()">✕</button>
+    </div>
+
+    <div class="error-box" *ngIf="errorMessage">⚠ {{ errorMessage }}</div>
+
+    <button class="btn-extract"
+            [disabled]="!selectedFile"
+            (click)="extract()">
+      ⚡ Extraire les données via OCR
+    </button>
+  </div>
+
+  <!-- STEP 2 : Loading OCR -->
+  <div *ngIf="step === 2" class="extracting">
+    <div class="spinner"></div>
+    <h3>Extraction OCR en cours...</h3>
+    <p>Analyse du PDF · reconnaissance des champs</p>
+  </div>
+
+  <!-- STEP 3 : Formulaire vérification -->
+  <div *ngIf="step === 3" class="form-panel">
+    <div class="form-panel-header">
+      <h3>Données extraites — vérifiez avant enregistrement</h3>
+      <span class="badge-ok">✓ OCR réussi</span>
+    </div>
+
+    <div class="form-body">
+      <div class="form-grid">
+
+        <div class="form-group">
+          <label>Numéro de facture</label>
+          <input type="text" [(ngModel)]="form.numeroFacture">
+        </div>
+
+        <div class="form-group">
+          <label>Date de facture</label>
+          <input type="date" [(ngModel)]="form.dateFacture">
+        </div>
+
+        <div class="form-group full">
+          <label>Fournisseur</label>
+          <input type="text" [(ngModel)]="form.nomFournisseur">
+        </div>
+
+        <div class="form-group">
+          <label>Montant HT</label>
+          <input type="number" [(ngModel)]="form.montantHt" step="0.001">
+        </div>
+
+        <div class="form-group">
+          <label>Montant TVA</label>
+          <input type="number" [(ngModel)]="form.montantTva" step="0.001">
+        </div>
+
+        <div class="form-group">
+          <label>Montant TTC</label>
+          <input type="number" [(ngModel)]="form.montantTtc" step="0.001">
+        </div>
+
+        <div class="form-group">
+          <label>Devise</label>
+          <select [(ngModel)]="form.devise">
+            <option value="TND">TND</option>
+            <option value="EUR">EUR</option>
+            <option value="USD">USD</option>
+          </select>
+        </div>
+
+        <!-- Lignes -->
+        <div class="form-group full" *ngIf="lignes.length > 0">
+          <label>Lignes de facturation ({{ lignes.length }})</label>
+          <div class="lignes-table">
+            <div class="lignes-header">
+              <span>Description</span>
+              <span>Qté</span>
+              <span>Prix U.</span>
+              <span>Total</span>
+            </div>
+            <div class="ligne-row" *ngFor="let l of lignes">
+              <span>{{ l.description }}</span>
+              <span>{{ l.quantite }}</span>
+              <span>{{ l.prixUnitaire | number:'1.3-3' }}</span>
+              <span>{{ l.total | number:'1.3-3' }}</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="error-box" *ngIf="saveError">⚠ {{ saveError }}</div>
+
+    <div class="form-footer">
+      <button class="btn btn-ghost" (click)="reset()">
+        ↩ Recommencer
+      </button>
+      <!-- ✅ BOUTON SAVE -->
+      <button class="btn btn-primary"
+              [disabled]="saving"
+              (click)="save()">
+        {{ saving ? 'Enregistrement...' : 'Enregistrer en base →' }}
+      </button>
+    </div>
+  </div>
+<div *ngIf="step === 4" class="success-panel">
+  <div class="success-icon">✓</div>
+  <h3>Facture enregistrée avec succès !</h3>
+  <p>La facture est en attente de validation.</p>
+  <p class="success-meta">
+    Référence : <strong>{{ savedRef }}</strong> · ID : <strong>#{{ savedId }}</strong>
+  </p>
+  <p style="color:#6b7694;font-size:0.8rem;margin-top:12px;">
+    Redirection automatique dans 2 secondes...
+  </p>
+  <div class="success-actions">
+    <button class="btn btn-ghost" (click)="reset()">Importer une autre</button>
+    <button class="btn btn-primary" routerLink="/liste-factures">
+      Voir les factures →
+    </button>
+  </div>
+</div>
+  <!-- STEP 4 : Succès -->
+ 
+
+</div>

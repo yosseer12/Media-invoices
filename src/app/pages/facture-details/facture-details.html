@@ -1,151 +1,158 @@
-<div class="dashboard">
+<app-navbar></app-navbar>
+<div class="page-content">
+<div class="fd-page">
 
-  <!-- Sidebar -->
-  <aside class="sidebar" [class.collapsed]="isCollapsed">
-
-    <div class="sidebar-top">
-      <div class="logo">MediaSoft</div>
-
-      <!-- bouton réduire -->
-      <div class="toggle-btn" (click)="toggleSidebar()">
-        ☰
-      </div>
-    </div>
-
-    <ul class="nav-links">
-
-      <li>
-        <a routerLink="/dashboard-admin" routerLinkActive="active">
-          <span class="icon">📊</span>
-          <span class="text">Dashboard</span>
-        </a>
-      </li>
-
-      <li>
-        <a routerLink="/import-factures">
-          <span class="icon">📤</span>
-          <span class="text">Import facture</span>
-        </a>
-      </li>
-
-      <li>
-        <a routerLink="/liste-factures">
-          <span class="icon">📄</span>
-          <span class="text">Liste des factures</span>
-        </a>
-      </li>
-
-      <li>
-        <a routerLink="/validation">
-          <span class="icon">✔️</span>
-          <span class="text">Validation</span>
-        </a>
-      </li>
-
-      <li>
-        <a routerLink="/synchronisation">
-          <span class="icon">🔄</span>
-          <span class="text">Synchronisation</span>
-        </a>
-      </li>
-
-      <li>
-        <a routerLink="/reporting">
-          <span class="icon">📈</span>
-          <span class="text">Reporting</span>
-        </a>
-      </li>
-
-      <li>
-        <a routerLink="/gestion-utilisateurs">
-          <span class="icon">👥</span>
-          <span class="text">Utilisateurs</span>
-        </a>
-      </li>
-
-    </ul>
-
-    <div class="user-menu">
-      <div class="user-email">admin@mediasoft.fr</div>
-      <button class="logout" (click)="logout()">Déconnexion</button>
-    </div>
-
-  </aside>
-  <!-- Content -->
-  <main class="content">
-    <button class="back" (click)="goBack()">← Retour à la liste</button>
-
-    <div class="details-block">
-      <h2>{{ facture.number }} – {{ facture.supplier }}</h2>
-      <p><strong>Adresse :</strong> {{ facture.address }}</p>
-      <p><strong>Date d'émission :</strong> {{ facture.date }}</p>
-      <p><strong>Date d'échéance :</strong> {{ facture.dueDate }}</p>
-
-      <div class="action-buttons">
-        <button (click)="download()">Télécharger</button>
-       
-      </div>
-
-      <h3>Lignes de facturation</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>Description</th>
-            <th>Quantité</th>
-            <th>Prix unitaire</th>
-            <th>Total</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let line of facture.lines">
-            <td>{{ line.description }}</td>
-            <td>{{ line.quantity }}</td>
-            <td>{{ line.unitPrice | currency:'EUR' }}</td>
-            <td>{{ line.total | currency:'EUR' }}</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <div class="totals-block">
-        <p><strong>Sous-total HT :</strong> {{ facture.subTotal | currency:'EUR' }}</p>
-        <p><strong>TVA :</strong> {{ facture.tva | currency:'EUR' }}</p>
-        <p><strong>Total TTC :</strong> {{ facture.total | currency:'EUR' }}</p>
-        <p><strong>Statut :</strong> {{ facture.status }}</p>
-        <p><strong>Méthode d'import :</strong> {{ facture.importMethod }}</p>
-      </div>
-
-      <h3>Historique Validation/Rejet</h3>
-      <table *ngIf="history.length">
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Action</th>
-            <th>Commentaire</th>
-            <th>Facture</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let h of history">
-            <td>{{ h.date }}</td>
-            <td>{{ h.action }}</td>
-            <td>{{ h.comment }}</td>
-            <td>{{ h.factureNumber }}</td>
-          </tr>
-        </tbody>
-      </table>
-
-    </div>
-  </main>
-</div>
-
-<!-- Modal -->
-<div class="modal" *ngIf="showModal">
-  <div class="modal-content">
-    <h3>{{ modalAction === 'validate' ? 'Valider' : 'Rejeter' }} la facture</h3>
-    <textarea [(ngModel)]="comment" placeholder="Ajouter un commentaire..." rows="3"></textarea>
-    <div class="modal-buttons">
-      <button (click)="confirmAction()">Confirmer</button>
-      <button (click)="cancelAction()">Annuler</button>
-    </div>
+  <!-- LOADING -->
+  <div class="fd-loading" *ngIf="loading">
+    <div class="fd-spinner"></div>
+    <p>Chargement de la facture…</p>
   </div>
+
+  <!-- ERROR -->
+  <div class="fd-not-found" *ngIf="!loading && (!facture || error)">
+    <div class="fd-not-found-icon">✕</div>
+    <h2>Facture introuvable</h2>
+    <p>La facture demandée n'existe pas ou une erreur est survenue.</p>
+    <button class="fd-btn fd-btn-primary" (click)="backToList()">← Retour à la liste</button>
+  </div>
+
+  <!-- FACTURE -->
+  <div class="fd-container" *ngIf="!loading && facture && !error">
+
+    <!-- HEADER -->
+    <div class="fd-header">
+      <button class="fd-back-btn" (click)="backToList()">← Retour</button>
+      <div class="fd-title-row">
+        <div>
+          <h1 class="fd-invoice-number">{{ facture.numeroFacture }}</h1>
+          <p class="fd-supplier">{{ facture.nomFournisseur }}</p>
+        </div>
+        <span class="fd-status-badge" [ngClass]="getStatusClass(facture.statutId)">
+          {{ getStatusText(facture.statutId) }}
+        </span>
+      </div>
+    </div>
+
+    <!-- AMOUNTS -->
+    <div class="fd-amounts-grid">
+      <div class="fd-amount-card">
+        <span class="fd-amount-label">Montant HT</span>
+        <span class="fd-amount-value">
+          {{ facture.montantHt | number:'1.2-2' }}
+          <span class="fd-currency">{{ facture.devise }}</span>
+        </span>
+      </div>
+      <div class="fd-amount-card">
+        <span class="fd-amount-label">TVA</span>
+        <span class="fd-amount-value">
+          {{ facture.montantTva | number:'1.2-2' }}
+          <span class="fd-currency">{{ facture.devise }}</span>
+        </span>
+      </div>
+      <div class="fd-amount-card fd-amount-card--total">
+        <span class="fd-amount-label">Total TTC</span>
+        <span class="fd-amount-value">
+          {{ montantTTC | number:'1.2-2' }}
+          <span class="fd-currency">{{ facture.devise }}</span>
+        </span>
+      </div>
+    </div>
+
+    <!-- INFO PANEL -->
+    <div class="fd-panel">
+      <div class="fd-panel-header"><h3>Informations</h3></div>
+      <div class="fd-panel-body fd-info-grid">
+        <div class="fd-info-item">
+          <span class="fd-info-label">Date de facture</span>
+          <span class="fd-info-value">{{ facture.dateFacture | date:'dd/MM/yyyy' }}</span>
+        </div>
+        <div class="fd-info-item">
+          <span class="fd-info-label">Devise</span>
+          <span class="fd-info-value">{{ facture.devise }}</span>
+        </div>
+        <div class="fd-info-item">
+          <span class="fd-info-label">Fournisseur</span>
+          <span class="fd-info-value">{{ facture.nomFournisseur }}</span>
+        </div>
+        <div class="fd-info-item">
+          <span class="fd-info-label">Statut</span>
+          <span class="fd-status-badge" [ngClass]="getStatusClass(facture.statutId)">
+            {{ getStatusText(facture.statutId) }}
+          </span>
+        </div>
+      </div>
+    </div>
+    <!-- ✅ FIN INFO PANEL -->
+
+    <!-- LIGNES PANEL -->
+    <div class="fd-panel">
+      <div class="fd-panel-header">
+        <h3>Lignes de facture</h3>
+        <span class="fd-count">{{ facture?.lignes?.length || 0 }} ligne(s)</span>
+      </div>
+      <div class="fd-empty" *ngIf="(facture?.lignes?.length || 0) === 0">
+        Aucune ligne disponible.
+      </div>
+      <div class="fd-table-wrapper" *ngIf="(facture?.lignes?.length || 0) > 0">
+        <div class="fd-table-head">
+          <span>Description</span>
+          <span>Quantité</span>
+          <span>Prix unitaire</span>
+          <span>Total</span>
+        </div>
+        <div class="fd-table-row" *ngFor="let l of facture?.lignes">
+          <span>{{ l.description }}</span>
+          <span class="fd-qty">{{ l.quantite }}</span>
+          <span class="fd-price">{{ l.prixUnitaire | number:'1.2-2' }} {{ facture.devise }}</span>
+          <span class="fd-price">{{ (l.quantite * l.prixUnitaire) | number:'1.2-2' }} {{ facture.devise }}</span>
+        </div>
+      </div>
+    </div>
+    <!-- ✅ FIN LIGNES PANEL -->
+
+    <!-- HISTORIQUE PANEL -->
+    <div class="fd-panel">
+      <div class="fd-panel-header">
+        <h3>Historique des modifications</h3>
+        <button class="fd-btn fd-btn-secondary" (click)="toggleHisto()">
+          {{ showHisto ? 'Masquer' : 'Voir historique' }}
+        </button>
+      </div>
+      <div class="fd-panel-body" *ngIf="showHisto">
+
+        <div *ngIf="loadingHisto" style="padding:1rem">Chargement…</div>
+
+        <div class="fd-empty" *ngIf="!loadingHisto && historique.length === 0">
+          Aucun historique pour cette facture.
+        </div>
+
+        <div *ngIf="!loadingHisto && historique.length > 0">
+          <div class="fd-table-head" style="grid-template-columns: 1fr 1fr 2fr;">
+            <span>Action</span>
+            <span>Date</span>
+            <span>Motif</span>
+          </div>
+          <div class="fd-table-row"
+               *ngFor="let h of historique"
+               style="grid-template-columns: 1fr 1fr 2fr;">
+            <span>
+              <span class="fd-status-badge" [ngClass]="{
+                'status-validated': h.action === 'Validation',
+                'status-rejected':  h.action === 'Rejet',
+                'status-pending':   h.action !== 'Validation' && h.action !== 'Rejet'
+              }">{{ h.action }}</span>
+            </span>
+            <span>{{ h.dateAction | date:'dd/MM/yyyy HH:mm' }}</span>
+            <span>{{ h.motifRejet || '—' }}</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <!-- ✅ FIN HISTORIQUE PANEL -->
+
+  </div>
+  <!-- ✅ FIN fd-container -->
+
+</div>
 </div>

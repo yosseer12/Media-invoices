@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SynchronisationComponent } from './synchronisation';
+import { DivaltoSync } from './divalto-sync';
 
-describe('Synchronisation', () => {
-  let component: SynchronisationComponent;
-  let fixture: ComponentFixture<SynchronisationComponent>;
+describe('DivaltoSync', () => {
+  let component: DivaltoSync;
+  let fixture: ComponentFixture<DivaltoSync>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SynchronisationComponent]
+      imports: [DivaltoSync]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(SynchronisationComponent);
+    fixture = TestBed.createComponent(DivaltoSync);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });
