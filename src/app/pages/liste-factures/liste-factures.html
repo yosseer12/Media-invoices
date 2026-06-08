@@ -1,91 +1,18 @@
 <div class="dashboard">
 
- 
-  <!-- Sidebar -->
-  <aside class="sidebar" [class.collapsed]="isCollapsed">
+  <app-sidebar role="admin" email="admin@mediasoft.fr"></app-sidebar>
 
-    <div class="sidebar-top">
-      <div class="logo">MediaSoft</div>
-
-      <!-- bouton réduire -->
-      <div class="toggle-btn" (click)="toggleSidebar()">
-        ☰
-      </div>
-    </div>
-
-    <ul class="nav-links">
-
-      <li>
-        <a routerLink="/dashboard-admin" routerLinkActive="active">
-          <span class="icon">📊</span>
-          <span class="text">Dashboard</span>
-        </a>
-      </li>
-
-      <li>
-        <a routerLink="/import-factures">
-          <span class="icon">📤</span>
-          <span class="text">Import facture</span>
-        </a>
-      </li>
-
-      <li>
-        <a routerLink="/liste-factures">
-          <span class="icon">📄</span>
-          <span class="text">Liste des factures</span>
-        </a>
-      </li>
-
-      <li>
-        <a routerLink="/validation">
-          <span class="icon">✔️</span>
-          <span class="text">Validation</span>
-        </a>
-      </li>
-
-      <li>
-        <a routerLink="/sync-divalto">
-          <span class="icon">🔄</span>
-          <span class="text">Synchronisation</span>
-        </a>
-      </li>
-
-      <li>
-        <a routerLink="/reporting">
-          <span class="icon">📈</span>
-          <span class="text">Reporting</span>
-        </a>
-      </li>
-
-      <li>
-        <a routerLink="/gestion-utilisateurs">
-          <span class="icon">👥</span>
-          <span class="text">Utilisateurs</span>
-        </a>
-      </li>
-
-    </ul>
-
-    <div class="user-menu">
-      <div class="user-email">admin@mediasoft.fr</div>
-      <button class="logout" (click)="logout()">Déconnexion</button>
-    </div>
-
-  </aside>
-
-  <!-- Main content -->
   <main class="content">
-    <div class="header">
+    <header>
       <h1>Liste des factures</h1>
       <p>Gérez toutes vos factures en un seul endroit</p>
-    </div>
+    </header>
 
- 
-
-  
-
-    <div class="filters">
-      <input type="text" placeholder="Rechercher par n° ou fournisseur..." [(ngModel)]="search" (input)="applyFilters()" />
+    <div class="toolbar">
+      <div class="search">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" placeholder="Rechercher par n° ou fournisseur..." [(ngModel)]="search" (input)="applyFilters()" />
+      </div>
       <select [(ngModel)]="statusFilter" (change)="applyFilters()">
         <option value="">Tous les statuts</option>
         <option value="Validée">Validée</option>
@@ -101,7 +28,7 @@
       </select>
     </div>
 
-    <div class="table-container">
+    <section class="table-section">
       <table>
         <thead>
           <tr>
@@ -112,25 +39,27 @@
             <th>Montant</th>
             <th>Statut</th>
             <th>Import</th>
-            <th>Actions</th>
+            <th class="ta-right">Actions</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let inv of filteredInvoices">
-            <td>{{ inv.number }}</td>
+            <td class="mono">{{ inv.number }}</td>
             <td>{{ inv.supplier }}</td>
             <td>{{ inv.date }}</td>
             <td>{{ inv.dueDate }}</td>
-            <td>{{ inv.total | currency:'EUR' }}</td>
-            <td>
-              <span class="status" [ngClass]="inv.status.toLowerCase().replace(' ','-')">{{ inv.status }}</span>
+            <td class="amount">{{ inv.total | currency:'EUR' }}</td>
+            <td><span class="status" [ngClass]="inv.status.toLowerCase().replace(' ','-')">{{ inv.status }}</span></td>
+            <td><span class="chip">{{ inv.importMethod }}</span></td>
+            <td class="ta-right">
+              <a class="link-btn" [routerLink]="['/facture-details', inv.number]">Détails →</a>
             </td>
-            <td>{{ inv.importMethod }}</td>
-            <td>
-              <a [routerLink]="['/facture-details', inv.number]">Détails</a>
-            </td>
+          </tr>
+          <tr *ngIf="!filteredInvoices.length">
+            <td colspan="8" class="empty">Aucune facture ne correspond à votre recherche.</td>
           </tr>
         </tbody>
       </table>
-    </div>
+    </section>
   </main>
+</div>

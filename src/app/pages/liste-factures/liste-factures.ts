@@ -3,13 +3,14 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { FactureService } from '../../services/facture.service';
+import { SidebarComponent } from '../../shared/sidebar/sidebar';
 
 @Component({
   selector: 'app-liste-factures',
   templateUrl: './liste-factures.html',
   styleUrls: ['./liste-factures.css'],
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule] // NgFor, NgClass et CurrencyPipe sont inclus via CommonModule
+  imports: [CommonModule, FormsModule, RouterModule, SidebarComponent]
 })
 export class ListeFacturesComponent implements OnInit {
   invoices: any[] = [];
@@ -17,22 +18,10 @@ export class ListeFacturesComponent implements OnInit {
   search = '';
   statusFilter = '';
   importFilter = '';
-    isCollapsed = false;
-
-  toggleSidebar() {
-    this.isCollapsed = !this.isCollapsed;
-  }
-
-    logout() {
-    console.log('Déconnexion');
-  }
-
-
 
   constructor(private factureService: FactureService) {}
 
   ngOnInit(): void {
-    // récupérer les factures depuis le service
     this.invoices = this.factureService.getInvoices();
     this.filteredInvoices = [...this.invoices];
     this.applyFilters();

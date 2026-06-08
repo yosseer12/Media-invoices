@@ -1,109 +1,64 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule, NgFor } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { FactureService } from '../../services/facture.service';
 import { FormsModule } from '@angular/forms';
+import { FactureService } from '../../services/facture.service';
+import { SidebarComponent } from '../../shared/sidebar/sidebar';
 
 @Component({
-selector:'app-validation',
-standalone:true,
-imports:[CommonModule,NgFor,RouterModule,FormsModule],
-templateUrl:'./validation.html',
-styleUrls:['./validation.css']
+  selector: 'app-validation',
+  standalone: true,
+  imports: [CommonModule, RouterModule, FormsModule, SidebarComponent],
+  templateUrl: './validation.html',
+  styleUrls: ['./validation.css']
 })
-export class ValidationComponent implements OnInit{
+export class ValidationComponent implements OnInit {
 
-pendingInvoices:any[]=[];
-showRejectModal = false;
-selectedInvoice: any = null;
-comment: string = '';
-validateComment: string = '';
-rejectComment: string = '';
-modalAction: 'validate' | 'reject' = 'validate';
-isCollapsed = false;
-showModal = false;
-constructor(private factureService:FactureService){}
+  pendingInvoices: any[] = [];
 
-ngOnInit(){
+  // reject modal
+  showRejectModal = false;
+  selectedNumber: string | null = null;
+  rejectComment = '';
 
-this.loadInvoices();
+  constructor(private factureService: FactureService) {}
 
-}
-toggleSidebar(){
+  ngOnInit() {
+    this.loadInvoices();
+  }
 
-this.isCollapsed=!this.isCollapsed;}
-loadPendingInvoices(){
+  loadInvoices() {
     this.pendingInvoices = this.factureService.getPendingInvoices();
   }
-loadInvoices(){
 
-this.pendingInvoices = this.factureService.getPendingInvoices();
-
-}
-
-
-  logout() {
-    console.log('Déconnexion');
+  validate(number: string) {
+    this.factureService.validateInvoice(number, 'Validée par l\'administrateur');
+    this.loadInvoices();
   }
 
-openModal(invoice: any, action: 'validate' | 'reject') {
-  this.selectedInvoice = invoice; // objet entier
-  this.modalAction = action;
-  this.comment = '';
-  this.showModal = true;
-}
-validate(number:string){
-
-this.factureService.validateInvoice(this.selectedInvoice, this.validateComment);
-}
-openRejectModal(number:string){
-
-this.selectedInvoice = number;
-this.showRejectModal = true;
-
-}
-
-confirmReject(){
-
-this.factureService.validateInvoice(this.selectedInvoice, this.validateComment);
-this.factureService.rejectInvoice(this.selectedInvoice, this.rejectComment);
-this.showRejectModal = false;
-this.rejectComment = '';
-
-this.loadInvoices();
-
-}
-
-cancelReject(){
-
-this.showRejectModal = false;
-this.rejectComment = '';
-
-}
-reject(number:string){
-
-this.factureService.rejectInvoice(this.selectedInvoice.number, this.rejectComment);
-}
-
-confirmAction() {
-  if (!this.comment) {
-    alert('Veuillez ajouter un commentaire.');
-    return;
+  openRejectModal(number: string) {
+    this.selectedNumber = number;
+    this.rejectComment = '';
+    this.showRejectModal = true;
   }
 
- if (!this.selectedInvoice) return;
+  confirmReject() {
+    if (!this.rejectComment.trim()) {
+      alert('Veuillez ajouter un commentaire de rejet.');
+      return;
+    }
+    if (this.selectedNumber) {
+      this.factureService.rejectInvoice(this.selectedNumber, this.rejectComment);
+    }
+    this.showRejectModal = false;
+    this.selectedNumber = null;
+    this.rejectComment = '';
+    this.loadInvoices();
+  }
 
-if (this.modalAction === 'validate') {
-  this.factureService.validateInvoice(this.selectedInvoice.number, this.comment);
-} else {
-  this.factureService.rejectInvoice(this.selectedInvoice.number, this.comment);
-}
-  this.loadPendingInvoices(); // mise à jour de la liste
-  this.showModal = false;
-}
-
-  cancelAction() {
-    this.showModal = false;
-    this.comment = '';
+  cancelReject() {
+    this.showRejectModal = false;
+    this.selectedNumber = null;
+    this.rejectComment = '';
   }
 }

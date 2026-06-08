@@ -1,31 +1,22 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';   
-import { Router, RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { SidebarComponent } from '../../shared/sidebar/sidebar';
 
 @Component({
   selector: 'app-dashboard-admin',
   standalone: true,
-  imports: [CommonModule , RouterModule],   
+  imports: [CommonModule, RouterModule, SidebarComponent],
   templateUrl: './dashboard-admin.html',
   styleUrls: ['./dashboard-admin.css']
 })
 export class DashboardAdminComponent {
 
-  isCollapsed = false;
-
-  toggleSidebar() {
-    this.isCollapsed = !this.isCollapsed;
-  }
-
-  logout() {
-    console.log('Déconnexion');
-  }
-
   stats = [
-    { title: 'Total factures', value: 5, color: '#4f46e5' },
-    { title: 'En attente', value: 2, color: '#f59e0b' },
-    { title: 'Validées', value: 1, color: '#10b981' },
-    { title: 'Synchronisées', value: 1, color: '#3b82f6' }
+    { title: 'Total factures', value: 5, icon: 'file',  color: '#5246e5' },
+    { title: 'En attente',     value: 2, icon: 'clock', color: '#b45309' },
+    { title: 'Validées',       value: 1, icon: 'check', color: '#059669' },
+    { title: 'Synchronisées',  value: 1, icon: 'sync',  color: '#0369a1' }
   ];
 
   totalAmount = 57001.45;

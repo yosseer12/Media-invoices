@@ -1,29 +1,18 @@
 <div class="dashboard">
 
-  <!-- Sidebar verticale simplifiée -->
-  <aside class="sidebar">
-    <div class="logo">MediaSoft</div>
+  <app-sidebar role="user" email="user@mediasoft.fr"></app-sidebar>
 
-    <ul class="nav-links">
-      <li><a href="#">Dashboard</a></li>
-      <li><a href="#">Liste des factures</a></li>
-      <li><a href="#">Import facture</a></li>
-    </ul>
-
-    <div class="user-menu">
-      <span>user@mediasoft.fr</span>
-      <button class="logout">Déconnexion</button>
-    </div>
-  </aside>
-
-  <!-- Contenu principal -->
   <main class="content">
     <header>
       <h1>Mes factures</h1>
-      <p>Suivez vos factures récentes</p>
+      <p>Suivez vos factures récentes en un coup d'œil</p>
     </header>
 
-    <div class="table-section">
+    <section class="table-section">
+      <div class="section-head">
+        <h3>Factures récentes</h3>
+        <span class="count">{{ myInvoices.length }} facture(s)</span>
+      </div>
       <table>
         <thead>
           <tr>
@@ -37,15 +26,15 @@
         </thead>
         <tbody>
           <tr *ngFor="let inv of myInvoices">
-            <td>{{ inv.number }}</td>
+            <td class="mono">{{ inv.number }}</td>
             <td>{{ inv.supplier }}</td>
             <td>{{ inv.date }}</td>
-            <td>{{ inv.amount }}</td>
-            <td [ngClass]="inv.status.toLowerCase().replace(' ', '-')">{{ inv.status }}</td>
-            <td>{{ inv.import }}</td>
+            <td class="amount">{{ inv.amount }}</td>
+            <td><span class="status" [ngClass]="inv.status.toLowerCase().replace(' ', '-')">{{ inv.status }}</span></td>
+            <td><span class="chip">{{ inv.import }}</span></td>
           </tr>
         </tbody>
       </table>
-    </div>
+    </section>
   </main>
 </div>

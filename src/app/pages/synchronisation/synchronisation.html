@@ -1,145 +1,92 @@
 <div class="dashboard">
 
-  
-  <!-- Sidebar -->
-<aside class="sidebar" [class.collapsed]="isCollapsed">
+  <app-sidebar role="admin" email="admin@mediasoft.fr"></app-sidebar>
 
-    <div class="sidebar-top">
-      <div class="logo">MediaSoft</div>
+  <main class="content">
 
-      <!-- bouton réduire -->
-      <div class="toggle-btn" (click)="toggleSidebar()">
-        ☰
-      </div>
-    </div>
+    <header class="page-header">
+      <h1>Synchronisation ERP Divalto</h1>
+      <p>Synchronisez vos factures validées avec votre ERP Divalto</p>
+    </header>
 
-    <ul class="nav-links">
-
-      <li>
-        <a routerLink="/dashboard-admin" routerLinkActive="active">
-          <span class="icon">📊</span>
-          <span class="text">Dashboard</span>
-        </a>
-      </li>
-
-      <li>
-        <a routerLink="/import-factures">
-          <span class="icon">📤</span>
-          <span class="text">Import facture</span>
-        </a>
-      </li>
-
-      <li>
-        <a routerLink="/liste-factures">
-          <span class="icon">📄</span>
-          <span class="text">Liste des factures</span>
-        </a>
-      </li>
-
-      <li>
-        <a routerLink="/validation">
-          <span class="icon">✔️</span>
-          <span class="text">Validation</span>
-        </a>
-      </li>
-
-      <li>
-        <a routerLink="/synchronisation">
-          <span class="icon">🔄</span>
-          <span class="text">Synchronisation</span>
-        </a>
-      </li>
-
-      <li>
-        <a routerLink="/reporting">
-          <span class="icon">📈</span>
-          <span class="text">Reporting</span>
-        </a>
-      </li>
-
-      <li>
-        <a routerLink="/gestion-utilisateurs">
-          <span class="icon">👥</span>
-          <span class="text">Utilisateurs</span>
-        </a>
-      </li>
-
-    </ul>
-
-    <div class="user-menu">
-      <div class="user-email">admin@mediasoft.fr</div>
-      <button class="logout" (click)="logout()">Déconnexion</button>
-    </div>
-
-  </aside>
-  <!-- Contenu principal -->
-  <div class="content">
-
-    <h2>Synchronisation ERP Divalto</h2>
-    <p>Synchronisez vos factures validées avec votre ERP Divalto</p>
-
-    <!-- Cartes statistiques -->
+    <!-- Stat cards -->
     <div class="stats-cards">
-      <div class="card blue">
-        <h3>Connecté</h3>
-        <p>✅ Active</p>
+      <div class="scard">
+        <span class="scard-dot ok"></span>
+        <div>
+          <span class="scard-label">Connexion</span>
+          <span class="scard-value">Active</span>
+        </div>
       </div>
-      <div class="card green">
-        <h3>Synchronisées</h3>
-        <p>{{syncedCount}} facture(s)</p>
+      <div class="scard">
+        <span class="scard-dot info"></span>
+        <div>
+          <span class="scard-label">Synchronisées</span>
+          <span class="scard-value">{{ syncedCount }} facture(s)</span>
+        </div>
       </div>
-      <div class="card yellow">
-        <h3>En attente</h3>
-        <p>{{pendingInvoices}} facture(s) à synchroniser</p>
-      </div>
-    </div>
-
-    <!-- Actions -->
-    <div class="sync-actions">
-      <h3>Actions de synchronisation</h3>
-
-      <div class="manual-sync">
-        <h4>Synchronisation manuelle</h4>
-        <p>{{pendingInvoices}} facture(s) prête(s) à synchroniser</p>
-        <button (click)="syncNow()">Synchroniser maintenant</button>
-      </div>
-
-      <div class="auto-sync">
-        <h4>Synchronisation automatique</h4>
-        <label>
-          <input type="checkbox" [(ngModel)]="autoSync">
-          Synchronisation automatique active
-        </label>
-        <p>Prochaine synchronisation : dans 47 minutes</p>
+      <div class="scard">
+        <span class="scard-dot warn"></span>
+        <div>
+          <span class="scard-label">En attente</span>
+          <span class="scard-value">{{ pendingInvoices }} à synchroniser</span>
+        </div>
       </div>
     </div>
 
-    <!-- Configuration Divalto -->
-    <div class="divalto-config">
-      <h3>Configuration Divalto</h3>
-      <input placeholder="Serveur" value="divalto.company.local">
-      <input placeholder="Base de données" value="PROD_COMPTA">
-      <input placeholder="Utilisateur" value="api_user">
-      <input type="password" placeholder="Mot de passe">
-      <div class="config-buttons">
-        <button (click)="testConnection()">Tester la connexion</button>
-        <button (click)="saveConfig()">Enregistrer la configuration</button>
-      </div>
+    <div class="sync-cols">
+
+      <!-- Actions -->
+      <section class="sync-actions">
+        <h3>Actions de synchronisation</h3>
+
+        <div class="action-box">
+          <div>
+            <h4>Synchronisation manuelle</h4>
+            <p>{{ pendingInvoices }} facture(s) prête(s) à synchroniser</p>
+          </div>
+          <button (click)="syncNow()">Synchroniser maintenant</button>
+        </div>
+
+        <div class="action-box">
+          <div>
+            <h4>Synchronisation automatique</h4>
+            <p>Prochaine synchronisation : dans 47 minutes</p>
+          </div>
+          <label class="switch-toggle">
+            <input type="checkbox" [(ngModel)]="autoSync">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </section>
+
+      <!-- Config -->
+      <section class="divalto-config">
+        <h3>Configuration Divalto</h3>
+        <div class="cfg-field"><label>Serveur</label><input placeholder="Serveur" value="divalto.company.local"></div>
+        <div class="cfg-field"><label>Base de données</label><input placeholder="Base de données" value="PROD_COMPTA"></div>
+        <div class="cfg-field"><label>Utilisateur</label><input placeholder="Utilisateur" value="api_user"></div>
+        <div class="cfg-field"><label>Mot de passe</label><input type="password" placeholder="••••••••"></div>
+        <div class="config-buttons">
+          <button class="cancel" (click)="testConnection()">Tester la connexion</button>
+          <button (click)="saveConfig()">Enregistrer</button>
+        </div>
+      </section>
     </div>
 
-    <!-- Historique -->
-    <div class="history">
+    <!-- History -->
+    <section class="history">
       <h3>Historique de synchronisation</h3>
+      <div class="hist-empty" *ngIf="!history.length">Aucune synchronisation enregistrée pour le moment.</div>
       <div *ngFor="let h of history" class="history-item">
         <div class="history-header">
-          <span class="invoice-number">{{h.factureNumber}}</span>
-          <span class="action">{{h.action}}</span>
-          <span class="date">{{h.date}}</span>
+          <span class="invoice-number">{{ h.factureNumber }}</span>
+          <span class="action-tag">{{ h.action }}</span>
+          <span class="date">{{ h.date }}</span>
         </div>
-        <div class="history-comment">Commentaire : {{h.comment}}</div>
+        <div class="history-comment">{{ h.comment }}</div>
       </div>
-    </div>
+    </section>
 
-  </div>
-
+  </main>
 </div>
