@@ -1,100 +1,37 @@
 <div class="dashboard">
 
-  <!-- Sidebar -->
-  <aside class="sidebar" [class.collapsed]="isCollapsed">
+  <app-sidebar role="admin" email="admin@mediasoft.fr"></app-sidebar>
 
-    <div class="sidebar-top">
-      <div class="logo">MediaSoft</div>
-
-      <!-- bouton réduire -->
-      <div class="toggle-btn" (click)="toggleSidebar()">
-        ☰
-      </div>
-    </div>
-
-    <ul class="nav-links">
-
-      <li>
-        <a routerLink="/dashboard-admin" routerLinkActive="active">
-          <span class="icon">📊</span>
-          <span class="text">Dashboard</span>
-        </a>
-      </li>
-
-      <li>
-        <a routerLink="/import-factures">
-          <span class="icon">📤</span>
-          <span class="text">Import facture</span>
-        </a>
-      </li>
-
-      <li>
-        <a routerLink="/liste-factures">
-          <span class="icon">📄</span>
-          <span class="text">Liste des factures</span>
-        </a>
-      </li>
-
-      <li>
-        <a routerLink="/validation">
-          <span class="icon">✔️</span>
-          <span class="text">Validation</span>
-        </a>
-      </li>
-
-      <li>
-        <a routerLink="/sync-divalto">
-          <span class="icon">🔄</span>
-          <span class="text">Synchronisation</span>
-        </a>
-      </li>
-
-      <li>
-        <a routerLink="/reporting">
-          <span class="icon">📈</span>
-          <span class="text">Reporting</span>
-        </a>
-      </li>
-
-      <li>
-        <a routerLink="/gestion-utilisateurs">
-          <span class="icon">👥</span>
-          <span class="text">Utilisateurs</span>
-        </a>
-      </li>
-
-    </ul>
-
-    <div class="user-menu">
-      <div class="user-email">admin@mediasoft.fr</div>
-      <button class="logout" (click)="logout()">Déconnexion</button>
-    </div>
-
-  </aside>
-  <!-- MAIN CONTENT -->
   <main class="content">
     <header class="page-header">
       <h1>Import de factures</h1>
       <p>Importez vos factures PDF avec extraction automatique des données</p>
     </header>
 
-    <!-- SECTION UPLOAD -->
-    <section class="import-section card">
-      <label class="file-upload">
-        Cliquez pour sélectionner un fichier PDF
-        <input type="file" (change)="onFileSelected($event)" accept="application/pdf">
+    <!-- UPLOAD -->
+    <section class="import-section">
+      <label class="dropzone" [class.has-file]="selectedFile">
+        <div class="dz-ico">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        </div>
+        <span class="dz-title">Cliquez pour sélectionner un fichier PDF</span>
+        <span class="dz-hint">Format accepté : PDF uniquement (max 10 Mo)</span>
+        <input type="file" (change)="onFileSelected($event)" accept="application/pdf" hidden>
       </label>
-      <small>Format accepté: PDF uniquement (max 10MB)</small>
 
       <div class="file-info" *ngIf="selectedFile">
-        <p><strong>Fichier :</strong> {{ fileName }} ({{ fileSize }})</p>
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        <span><strong>{{ fileName }}</strong> · {{ fileSize }}</span>
+        <span class="ok-tag">Extrait ✓</span>
       </div>
     </section>
 
-    <!-- SECTION DONNÉES EXTRAITES -->
-    <section class="extracted-data card" *ngIf="extractedData">
-      <h2>Données extraites</h2>
-      <p>Vérifiez et modifiez les informations si nécessaire.</p>
+    <!-- EXTRACTED DATA -->
+    <section class="extracted-data" *ngIf="extractedData">
+      <div class="ed-head">
+        <h2>Données extraites</h2>
+        <p>Vérifiez et modifiez les informations si nécessaire.</p>
+      </div>
 
       <form class="invoice-form">
         <div class="form-row">
@@ -119,7 +56,7 @@
           </div>
         </div>
 
-        <div class="form-row">
+        <div class="form-row three">
           <div class="form-group">
             <label>Montant HT</label>
             <input type="number" [(ngModel)]="extractedData.amountHT" name="amountHT">
@@ -145,11 +82,10 @@
         </div>
 
         <div class="form-actions">
-          <button type="button" class="btn save" (click)="saveInvoice()">Enregistrer</button>
-          <button type="button" class="btn cancel" (click)="cancel()">Annuler</button>
+          <button type="button" class="cancel" (click)="cancel()">Annuler</button>
+          <button type="button" class="save" (click)="saveInvoice()">Enregistrer la facture</button>
         </div>
       </form>
     </section>
   </main>
-
 </div>

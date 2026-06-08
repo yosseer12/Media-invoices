@@ -2,11 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FactureService } from '../../services/facture.service';
+import { SidebarComponent } from '../../shared/sidebar/sidebar';
 
 @Component({
   selector: 'app-synchronisation',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, SidebarComponent],
   templateUrl: './synchronisation.html',
   styleUrls: ['./synchronisation.css']
 })
@@ -16,16 +17,6 @@ export class SynchronisationComponent implements OnInit {
   connected = true;
   autoSync = true;
   syncedCount = 1;
-  isCollapsed = false;
-
-  toggleSidebar() {
-    this.isCollapsed = !this.isCollapsed;
-  }
-
-  logout() {
-    console.log('Déconnexion');
-  }
-
 
   constructor(private factureService: FactureService) {}
 
@@ -54,5 +45,4 @@ export class SynchronisationComponent implements OnInit {
   saveConfig() {
     alert('Configuration enregistrée');
   }
-
 }

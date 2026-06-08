@@ -1,7 +1,8 @@
-import { Component, signal } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { SidebarComponent } from '../../shared/sidebar/sidebar';
 
 interface User {
   id: number;
@@ -15,17 +16,11 @@ interface User {
 @Component({
   selector: 'app-gestion-utilisateurs',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, SidebarComponent],
   templateUrl: './gestion-utilisateurs.html',
   styleUrls: ['./gestion-utilisateurs.css']
 })
 export class GestionUtilisateursComponent {
-
-  isCollapsed = false;
-
-  toggleSidebar() {
-    this.isCollapsed = !this.isCollapsed;
-  }
 
   users: User[] = [
     {id:1,name:'Admin User',email:'admin@mediasoft.fr',role:'Administrateur',createdAt:'15/01/2026',status:'Actif'},
@@ -34,48 +29,55 @@ export class GestionUtilisateursComponent {
     {id:4,name:'Jean Martin',email:'jean.martin@mediasoft.fr',role:'Utilisateur',createdAt:'01/03/2026',status:'Actif'}
   ];
 
-  searchText = signal('');
+  searchText = '';
 
   // Modal
-  showModal = signal(false);
-  modalTitle = signal('Ajouter un utilisateur');
+  showModal = false;
+  modalTitle = 'Ajouter un utilisateur';
   editingUser: User | null = null;
   formUser: Partial<User> = {};
 
-  // Ouvrir modal pour ajouter ou modifier
+  get filteredUsers(): User[] {
+    const q = this.searchText.toLowerCase();
+    return this.users.filter(u =>
+      u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q)
+    );
+  }
+
+  get adminCount() { return this.users.filter(u => u.role === 'Administrateur').length; }
+  get activeCount() { return this.users.filter(u => u.status === 'Actif').length; }
+
   openAddModal() {
-    this.modalTitle.set('Ajouter un utilisateur');
-    this.formUser = {};
+    this.modalTitle = 'Ajouter un utilisateur';
+    this.formUser = { role: 'Utilisateur', status: 'Actif' };
     this.editingUser = null;
-    this.showModal.set(true);
+    this.showModal = true;
   }
 
   openEditModal(user: User) {
-    this.modalTitle.set('Modifier utilisateur');
-    this.formUser = {...user};
+    this.modalTitle = 'Modifier utilisateur';
+    this.formUser = { ...user };
     this.editingUser = user;
-    this.showModal.set(true);
+    this.showModal = true;
   }
 
   closeModal() {
-    this.showModal.set(false);
+    this.showModal = false;
     this.formUser = {};
     this.editingUser = null;
   }
 
   saveUser() {
-    if(this.editingUser) {
-      // Modifier
+    if (this.editingUser) {
       Object.assign(this.editingUser, this.formUser);
     } else {
-      // Ajouter
       const newUser: User = {
-        id: this.users.length + 1,
+        id: this.users.length ? Math.max(...this.users.map(u => u.id)) + 1 : 1,
         name: this.formUser.name || '',
         email: this.formUser.email || '',
-        role: this.formUser.role as 'Administrateur'|'Utilisateur' || 'Utilisateur',
-        createdAt: new Date().toLocaleDateString(),
-        status: this.formUser.status as 'Actif'|'Inactif' || 'Actif'
+        role: (this.formUser.role as 'Administrateur' | 'Utilisateur') || 'Utilisateur',
+        createdAt: new Date().toLocaleDateString('fr-FR'),
+        status: (this.formUser.status as 'Actif' | 'Inactif') || 'Actif'
       };
       this.users.push(newUser);
     }
@@ -83,12 +85,8 @@ export class GestionUtilisateursComponent {
   }
 
   deleteUser(user: User) {
-    if(confirm(`Supprimer ${user.name} ?`)) {
+    if (confirm(`Supprimer ${user.name} ?`)) {
       this.users = this.users.filter(u => u.id !== user.id);
     }
-  }
-
-  logout() {
-    console.log('Déconnexion');
   }
 }

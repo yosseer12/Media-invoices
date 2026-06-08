@@ -106,7 +106,7 @@ date:new Date().toLocaleString()
 
 /* rejet */
 
-rejectInvoice({ number, comment }: { number: string; comment: string; }, rejectComment: string){
+rejectInvoice(number:string, comment:string){
 
 const invoice=this.invoices.find(inv=>inv.number===number);
 

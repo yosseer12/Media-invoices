@@ -1,40 +1,59 @@
-<div class="auth-container">
+<div class="auth">
 
-<div class="left-panel">
-<h1>Join MediaSoft</h1>
-<p>Automate your invoices with AI</p>
-</div>
+  <!-- Brand showcase panel -->
+  <aside class="auth-aside">
+    <div class="aside-top">
+      <div class="brand">
+        <span class="brand-mark">M</span>
+        <span class="brand-word">MediaSoft</span>
+      </div>
+    </div>
 
-<div class="auth-card">
+    <div class="aside-copy">
+      <h1>Rejoignez MediaSoft<br>et gagnez du temps.</h1>
+      <p>Créez votre espace et automatisez le traitement de vos factures fournisseurs dès aujourd'hui.</p>
 
-<h2>Create account</h2>
+      <ul class="aside-points">
+        <li><span class="dot"></span> Mise en route en quelques minutes</li>
+        <li><span class="dot"></span> Données extraites automatiquement</li>
+        <li><span class="dot"></span> Validation &amp; synchronisation centralisées</li>
+      </ul>
+    </div>
 
-<form [formGroup]="registerForm" (ngSubmit)="register()">
+    <div class="aside-foot">© 2026 MediaSoft — Tous droits réservés</div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+  </aside>
 
-<input
-type="text"
-placeholder="Company name"
-formControlName="name">
+  <!-- Form panel -->
+  <main class="auth-main">
+    <div class="auth-card">
+      <h2>Créer un compte</h2>
+      <p class="sub">Commencez gratuitement avec MediaSoft</p>
 
-<input
-type="email"
-placeholder="Email"
-formControlName="email">
+      <form [formGroup]="registerForm" (ngSubmit)="register()">
+        <div class="field">
+          <label for="name">Nom de l'entreprise</label>
+          <input id="name" type="text" placeholder="Votre société" formControlName="name">
+        </div>
 
-<input
-type="password"
-placeholder="Password"
-formControlName="password">
+        <div class="field">
+          <label for="email">Adresse e-mail</label>
+          <input id="email" type="email" placeholder="vous@exemple.fr" formControlName="email" autocomplete="email">
+        </div>
 
-<button>Create account</button>
+        <div class="field">
+          <label for="password">Mot de passe</label>
+          <input id="password" type="password" placeholder="••••••••" formControlName="password" autocomplete="new-password">
+        </div>
 
-</form>
+        <button type="submit" class="submit" [disabled]="registerForm.invalid">Créer mon compte</button>
+      </form>
 
-<p class="switch">
-  Already have an account ?
-  <a routerLink="/login">Sign in</a>
-</p>
-
-</div>
+      <p class="switch">
+        Vous avez déjà un compte ? <a routerLink="/login">Se connecter</a>
+      </p>
+    </div>
+  </main>
 
 </div>

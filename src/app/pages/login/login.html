@@ -1,24 +1,60 @@
-<div class="login-page">
-  <div class="login-box">
-    <h1>MediaSoft Invoices Service</h1>
-    <p>Connectez-vous à votre compte</p>
+<div class="auth">
 
-    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-      <div class="input-group">
-        <label for="email">Email</label>
-        <input id="email" type="email" formControlName="email" placeholder="vous@exemple.fr" required>
+  <!-- Brand showcase panel -->
+  <aside class="auth-aside">
+    <div class="aside-top">
+      <div class="brand">
+        <span class="brand-mark">M</span>
+        <span class="brand-word">MediaSoft</span>
+      </div>
+    </div>
+
+    <div class="aside-copy">
+      <h1>Pilotez vos factures<br>fournisseurs sans effort.</h1>
+      <p>Import intelligent, validation, synchronisation Divalto et reporting — réunis dans une seule plateforme.</p>
+
+      <ul class="aside-points">
+        <li><span class="dot"></span> Extraction automatique des données PDF</li>
+        <li><span class="dot"></span> Workflow de validation en un clic</li>
+        <li><span class="dot"></span> Synchronisation ERP &amp; reporting en temps réel</li>
+      </ul>
+    </div>
+
+    <div class="aside-foot">© 2026 MediaSoft — Tous droits réservés</div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+  </aside>
+
+  <!-- Form panel -->
+  <main class="auth-main">
+    <div class="auth-card">
+      <h2>Bon retour 👋</h2>
+      <p class="sub">Connectez-vous à votre espace MediaSoft</p>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <div class="field">
+          <label for="email">Adresse e-mail</label>
+          <input id="email" type="email" formControlName="email" placeholder="vous@exemple.fr" autocomplete="email">
+        </div>
+
+        <div class="field">
+          <label for="password">Mot de passe</label>
+          <input id="password" type="password" formControlName="password" placeholder="••••••••" autocomplete="current-password">
+        </div>
+
+        <button type="submit" class="submit" [disabled]="loginForm.invalid">Se connecter</button>
+      </form>
+
+      <div class="demo-hint">
+        <strong>Comptes de démonstration</strong>
+        <span>Admin — admin&#64;mediasoft.fr / admin123</span>
+        <span>Utilisateur — user&#64;mediasoft.fr / user123</span>
       </div>
 
-      <div class="input-group">
-        <label for="password">Mot de passe</label>
-        <input id="password" type="password" formControlName="password" placeholder="••••••••" required>
-      </div>
+      <p class="switch">
+        Pas encore de compte ? <a routerLink="/register">Créer un compte</a>
+      </p>
+    </div>
+  </main>
 
-      <button type="submit" [disabled]="loginForm.invalid">Se connecter</button>
-    </form>
-
-    <p class="switch">
-      Pas encore de compte ? <a routerLink="/register">Créer un compte</a>
-    </p>
-  </div>
 </div>
